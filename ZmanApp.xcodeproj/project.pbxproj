@@ -1,0 +1,646 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		20B55D2CC6E2FE50BAF8C0AB /* Residence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E06723018FFE44F784C2F9E /* Residence.swift */; };
+		260A4F62D51CAB5473D27BBC /* GarageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB2B29BEBA4C8D0C2B08DAD /* GarageViewModel.swift */; };
+		3299827561255748F1201689 /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C1BB6EE09E49896DA591EC /* RoomView.swift */; };
+		33835D41C58D10E6765E4EDF /* ZmanWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E4A4ADFF146D7155E6FD68CD /* ZmanWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		3DDCB708E21794C52FEDC4B2 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD8F1FC7F8683ACEE04626E /* LoginView.swift */; };
+		40A5714B055AFEB69BABBA46 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607F71E6405BFA0738878200 /* APIService.swift */; };
+		4502DBB74A3728B3336CCED4 /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C6FAACC61C8443CA49C8533 /* SectionHeader.swift */; };
+		467A6E27D951B2FA4FF1A439 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A44EF9B7B1953FA19FBAB921 /* Assets.xcassets */; };
+		4D25152111D74394ACA8BA87 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6194A063B565275AACD1E1F5 /* OnboardingView.swift */; };
+		5644250C6E9EFC7548364A38 /* PadDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62998EC46CCBE304A045E82E /* PadDashboardView.swift */; };
+		56AD6227B6C7E03EADCF66A2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D3B76980B99A03AFA21BC8 /* ContentView.swift */; };
+		5C42D750014B1CF75C5BEBB0 /* QuickActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25588149DA33727920D7382 /* QuickActionButton.swift */; };
+		671070867CF0447C98AFCF36 /* TunnelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61F96D36E6F61A61807F28B /* TunnelConfig.swift */; };
+		69E293D57F404927F2674E3C /* ZmanWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BA2B3327D41B10E4303876 /* ZmanWidgets.swift */; };
+		6A067E003083DCEBEE62B5FA /* ZmanAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B16F4EFF179BB2A304C1A1D /* ZmanAppApp.swift */; };
+		6D01382F5D594033603451F3 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2D1C24D3A46360EF2EC824 /* PersistenceService.swift */; };
+		6EA5AFC885BD54BBBA6F4DEE /* APIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB8D8A5A498585AD59B1F61 /* APIModels.swift */; };
+		95DD80F1CD37CED857B5BB94 /* DeviceWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971612C7CEC12CA33F46D10E /* DeviceWidget.swift */; };
+		9F465A8D888FD1A8A8CD08B7 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4E5A2E95C364574F3A1630 /* AppState.swift */; };
+		B6B82090880ED2CC25F49C74 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB1A4022AA1DC4262A173EB /* Room.swift */; };
+		BD64F1AD95346D790DD16816 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FDEDFB20C4AE875A3CF326C4 /* Assets.xcassets */; };
+		C095CB8DB983DDBB164AC8F1 /* GarageDoorControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927DBBE24DD0C6047D6AB69F /* GarageDoorControl.swift */; };
+		C787652270ACB93BF42A6E56 /* WidgetCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D8951C7FFB3288364DB5D3 /* WidgetCard.swift */; };
+		CC334C043D25446AAE81E63E /* GarageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EEED35BF86AE931FEA824B8 /* GarageView.swift */; };
+		D549B04B7600532C16407860 /* StatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76865972481C5BD294CB405E /* StatusBadge.swift */; };
+		D55D198B20DBA132AFA0BF2F /* RoomViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5B69B06153580884D5C2B3 /* RoomViewModel.swift */; };
+		F266D5BBDBF71B2B3C96A1C1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589A6991586B81D917F4EA70 /* SettingsView.swift */; };
+		F7B750EA7F0E975C2DF8BE48 /* PhoneDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB5ECBB416D3B872448145 /* PhoneDashboardView.swift */; };
+		FC2144AD1BB28F87E2029AB3 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2FB4E1E2BB2D27ED97AB56F /* AppTheme.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		67EFE4B9F24028E7F8781B5B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3A413FB5CC442F631FBCDFFF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 28F61C1EFF1C54CFD668659C;
+			remoteInfo = ZmanWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		518A2BAFF0F1869DAF15CFF9 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				33835D41C58D10E6765E4EDF /* ZmanWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0BB1A4022AA1DC4262A173EB /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
+		0CB8D8A5A498585AD59B1F61 /* APIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModels.swift; sourceTree = "<group>"; };
+		0EEED35BF86AE931FEA824B8 /* GarageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageView.swift; sourceTree = "<group>"; };
+		1C6FAACC61C8443CA49C8533 /* SectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeader.swift; sourceTree = "<group>"; };
+		1F5B69B06153580884D5C2B3 /* RoomViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomViewModel.swift; sourceTree = "<group>"; };
+		3B16F4EFF179BB2A304C1A1D /* ZmanAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZmanAppApp.swift; sourceTree = "<group>"; };
+		3E06723018FFE44F784C2F9E /* Residence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Residence.swift; sourceTree = "<group>"; };
+		589A6991586B81D917F4EA70 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		5F2D1C24D3A46360EF2EC824 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
+		6019274E00AE90E97259A65D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		607F71E6405BFA0738878200 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
+		6194A063B565275AACD1E1F5 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		62998EC46CCBE304A045E82E /* PadDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PadDashboardView.swift; sourceTree = "<group>"; };
+		65CB5ECBB416D3B872448145 /* PhoneDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneDashboardView.swift; sourceTree = "<group>"; };
+		76865972481C5BD294CB405E /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
+		7FB14D5F0F5290D896049FD6 /* ZmanApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ZmanApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FB2B29BEBA4C8D0C2B08DAD /* GarageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageViewModel.swift; sourceTree = "<group>"; };
+		82FA9BEB2B08A87225723B84 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		84BA2B3327D41B10E4303876 /* ZmanWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZmanWidgets.swift; sourceTree = "<group>"; };
+		927DBBE24DD0C6047D6AB69F /* GarageDoorControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageDoorControl.swift; sourceTree = "<group>"; };
+		971612C7CEC12CA33F46D10E /* DeviceWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceWidget.swift; sourceTree = "<group>"; };
+		A25588149DA33727920D7382 /* QuickActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionButton.swift; sourceTree = "<group>"; };
+		A2FB4E1E2BB2D27ED97AB56F /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		A44EF9B7B1953FA19FBAB921 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		ACD8F1FC7F8683ACEE04626E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		B61F96D36E6F61A61807F28B /* TunnelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelConfig.swift; sourceTree = "<group>"; };
+		CE4E5A2E95C364574F3A1630 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		D9C1BB6EE09E49896DA591EC /* RoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
+		E4A4ADFF146D7155E6FD68CD /* ZmanWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ZmanWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8D8951C7FFB3288364DB5D3 /* WidgetCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetCard.swift; sourceTree = "<group>"; };
+		F0D3B76980B99A03AFA21BC8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FDEDFB20C4AE875A3CF326C4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		06D1DFA47C7B079E36BF024B = {
+			isa = PBXGroup;
+			children = (
+				788567EAF0BBEC44BA36896A /* ZmanApp */,
+				F010E559016384423AB71E6D /* ZmanWidgets */,
+				FCD811081E3F584FE9BE884A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		24434DC973C16929EC0BF033 /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		3A69B21FC75A45C19F62B3B0 /* Room */ = {
+			isa = PBXGroup;
+			children = (
+				D9C1BB6EE09E49896DA591EC /* RoomView.swift */,
+			);
+			path = Room;
+			sourceTree = "<group>";
+		};
+		425480B7A60BA7778B6CDE7F /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				A2FB4E1E2BB2D27ED97AB56F /* AppTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		5B57766302B28E16153EB445 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7B9B90E8DCBE3542BE333903 /* Components */,
+				DB114E32287AD99D34AC827C /* Dashboard */,
+				A7FC37193CFE097FB2E38069 /* Garage */,
+				84A981F9AE213EC703CA6B29 /* Residence */,
+				3A69B21FC75A45C19F62B3B0 /* Room */,
+				A5A16835DC9B0927A64D20E7 /* Settings */,
+				24434DC973C16929EC0BF033 /* Widgets */,
+				F0D3B76980B99A03AFA21BC8 /* ContentView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		788567EAF0BBEC44BA36896A /* ZmanApp */ = {
+			isa = PBXGroup;
+			children = (
+				B196D47557CAB6F7290EFC1A /* Models */,
+				965ABF2B095C5FCC6A501B7B /* Services */,
+				425480B7A60BA7778B6CDE7F /* Theme */,
+				F34FF6CCF25060134F8CEC67 /* ViewModels */,
+				5B57766302B28E16153EB445 /* Views */,
+				A44EF9B7B1953FA19FBAB921 /* Assets.xcassets */,
+				82FA9BEB2B08A87225723B84 /* Info.plist */,
+				3B16F4EFF179BB2A304C1A1D /* ZmanAppApp.swift */,
+			);
+			path = ZmanApp;
+			sourceTree = "<group>";
+		};
+		7B9B90E8DCBE3542BE333903 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A25588149DA33727920D7382 /* QuickActionButton.swift */,
+				1C6FAACC61C8443CA49C8533 /* SectionHeader.swift */,
+				76865972481C5BD294CB405E /* StatusBadge.swift */,
+				E8D8951C7FFB3288364DB5D3 /* WidgetCard.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		84A981F9AE213EC703CA6B29 /* Residence */ = {
+			isa = PBXGroup;
+			children = (
+				ACD8F1FC7F8683ACEE04626E /* LoginView.swift */,
+				6194A063B565275AACD1E1F5 /* OnboardingView.swift */,
+			);
+			path = Residence;
+			sourceTree = "<group>";
+		};
+		965ABF2B095C5FCC6A501B7B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				607F71E6405BFA0738878200 /* APIService.swift */,
+				5F2D1C24D3A46360EF2EC824 /* PersistenceService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A5A16835DC9B0927A64D20E7 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				589A6991586B81D917F4EA70 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		A7FC37193CFE097FB2E38069 /* Garage */ = {
+			isa = PBXGroup;
+			children = (
+				927DBBE24DD0C6047D6AB69F /* GarageDoorControl.swift */,
+				0EEED35BF86AE931FEA824B8 /* GarageView.swift */,
+			);
+			path = Garage;
+			sourceTree = "<group>";
+		};
+		B196D47557CAB6F7290EFC1A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0CB8D8A5A498585AD59B1F61 /* APIModels.swift */,
+				971612C7CEC12CA33F46D10E /* DeviceWidget.swift */,
+				3E06723018FFE44F784C2F9E /* Residence.swift */,
+				0BB1A4022AA1DC4262A173EB /* Room.swift */,
+				B61F96D36E6F61A61807F28B /* TunnelConfig.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DB114E32287AD99D34AC827C /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				62998EC46CCBE304A045E82E /* PadDashboardView.swift */,
+				65CB5ECBB416D3B872448145 /* PhoneDashboardView.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		F010E559016384423AB71E6D /* ZmanWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				FDEDFB20C4AE875A3CF326C4 /* Assets.xcassets */,
+				6019274E00AE90E97259A65D /* Info.plist */,
+				84BA2B3327D41B10E4303876 /* ZmanWidgets.swift */,
+			);
+			path = ZmanWidgets;
+			sourceTree = "<group>";
+		};
+		F34FF6CCF25060134F8CEC67 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CE4E5A2E95C364574F3A1630 /* AppState.swift */,
+				7FB2B29BEBA4C8D0C2B08DAD /* GarageViewModel.swift */,
+				1F5B69B06153580884D5C2B3 /* RoomViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		FCD811081E3F584FE9BE884A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7FB14D5F0F5290D896049FD6 /* ZmanApp.app */,
+				E4A4ADFF146D7155E6FD68CD /* ZmanWidgets.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		28F61C1EFF1C54CFD668659C /* ZmanWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BA52E5BE7D4240EE9F54BE66 /* Build configuration list for PBXNativeTarget "ZmanWidgets" */;
+			buildPhases = (
+				2D1607A640338147D7F5A59F /* Sources */,
+				150E584911405A062B099D48 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ZmanWidgets;
+			packageProductDependencies = (
+			);
+			productName = ZmanWidgets;
+			productReference = E4A4ADFF146D7155E6FD68CD /* ZmanWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		E71A813C1057A03D95C61609 /* ZmanApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BEA45B3DD2AA8E134F1E1A24 /* Build configuration list for PBXNativeTarget "ZmanApp" */;
+			buildPhases = (
+				6DB57B38C21F6ABCBEC6AB26 /* Sources */,
+				24D240DBBA60A0B689604619 /* Resources */,
+				518A2BAFF0F1869DAF15CFF9 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AF7FCD3E5B675A257A4B9560 /* PBXTargetDependency */,
+			);
+			name = ZmanApp;
+			packageProductDependencies = (
+			);
+			productName = ZmanApp;
+			productReference = 7FB14D5F0F5290D896049FD6 /* ZmanApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3A413FB5CC442F631FBCDFFF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					28F61C1EFF1C54CFD668659C = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+					E71A813C1057A03D95C61609 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = 499C75172AF48B4B7178D952 /* Build configuration list for PBXProject "ZmanApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 06D1DFA47C7B079E36BF024B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = FCD811081E3F584FE9BE884A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E71A813C1057A03D95C61609 /* ZmanApp */,
+				28F61C1EFF1C54CFD668659C /* ZmanWidgets */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		150E584911405A062B099D48 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD64F1AD95346D790DD16816 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		24D240DBBA60A0B689604619 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				467A6E27D951B2FA4FF1A439 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2D1607A640338147D7F5A59F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69E293D57F404927F2674E3C /* ZmanWidgets.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6DB57B38C21F6ABCBEC6AB26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6EA5AFC885BD54BBBA6F4DEE /* APIModels.swift in Sources */,
+				40A5714B055AFEB69BABBA46 /* APIService.swift in Sources */,
+				9F465A8D888FD1A8A8CD08B7 /* AppState.swift in Sources */,
+				FC2144AD1BB28F87E2029AB3 /* AppTheme.swift in Sources */,
+				56AD6227B6C7E03EADCF66A2 /* ContentView.swift in Sources */,
+				95DD80F1CD37CED857B5BB94 /* DeviceWidget.swift in Sources */,
+				C095CB8DB983DDBB164AC8F1 /* GarageDoorControl.swift in Sources */,
+				CC334C043D25446AAE81E63E /* GarageView.swift in Sources */,
+				260A4F62D51CAB5473D27BBC /* GarageViewModel.swift in Sources */,
+				3DDCB708E21794C52FEDC4B2 /* LoginView.swift in Sources */,
+				4D25152111D74394ACA8BA87 /* OnboardingView.swift in Sources */,
+				5644250C6E9EFC7548364A38 /* PadDashboardView.swift in Sources */,
+				6D01382F5D594033603451F3 /* PersistenceService.swift in Sources */,
+				F7B750EA7F0E975C2DF8BE48 /* PhoneDashboardView.swift in Sources */,
+				5C42D750014B1CF75C5BEBB0 /* QuickActionButton.swift in Sources */,
+				20B55D2CC6E2FE50BAF8C0AB /* Residence.swift in Sources */,
+				B6B82090880ED2CC25F49C74 /* Room.swift in Sources */,
+				3299827561255748F1201689 /* RoomView.swift in Sources */,
+				D55D198B20DBA132AFA0BF2F /* RoomViewModel.swift in Sources */,
+				4502DBB74A3728B3336CCED4 /* SectionHeader.swift in Sources */,
+				F266D5BBDBF71B2B3C96A1C1 /* SettingsView.swift in Sources */,
+				D549B04B7600532C16407860 /* StatusBadge.swift in Sources */,
+				671070867CF0447C98AFCF36 /* TunnelConfig.swift in Sources */,
+				C787652270ACB93BF42A6E56 /* WidgetCard.swift in Sources */,
+				6A067E003083DCEBEE62B5FA /* ZmanAppApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AF7FCD3E5B675A257A4B9560 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 28F61C1EFF1C54CFD668659C /* ZmanWidgets */;
+			targetProxy = 67EFE4B9F24028E7F8781B5B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0594144F15CD1FEC36C6F286 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		85A0E8F5279FBE893DB2F03B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				INFOPLIST_FILE = ZmanWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zmanapp.app.widgets;
+				PRODUCT_NAME = ZmanWidgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B50F234C9E5770CAB158DC2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = ZmanApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zmanapp.app;
+				PRODUCT_NAME = Zman;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C9AF76B0CAF7FD1E24687FDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = ZmanApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zmanapp.app;
+				PRODUCT_NAME = Zman;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D28EC08A52F11E277085781E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		DFEF77E8B35D550B54998BE9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				INFOPLIST_FILE = ZmanWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zmanapp.app.widgets;
+				PRODUCT_NAME = ZmanWidgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		499C75172AF48B4B7178D952 /* Build configuration list for PBXProject "ZmanApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D28EC08A52F11E277085781E /* Debug */,
+				0594144F15CD1FEC36C6F286 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BA52E5BE7D4240EE9F54BE66 /* Build configuration list for PBXNativeTarget "ZmanWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DFEF77E8B35D550B54998BE9 /* Debug */,
+				85A0E8F5279FBE893DB2F03B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BEA45B3DD2AA8E134F1E1A24 /* Build configuration list for PBXNativeTarget "ZmanApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9AF76B0CAF7FD1E24687FDC /* Debug */,
+				B50F234C9E5770CAB158DC2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3A413FB5CC442F631FBCDFFF /* Project object */;
+}
