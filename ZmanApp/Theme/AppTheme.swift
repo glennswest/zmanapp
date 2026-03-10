@@ -4,15 +4,24 @@ enum AppTheme {
     // MARK: - Colors
 
     static let accent = Color.accentColor
+
+    #if os(macOS)
+    static let background = Color(nsColor: .windowBackgroundColor)
+    static let secondaryBackground = Color(nsColor: .controlBackgroundColor)
+    static let tertiaryBackground = Color(nsColor: .underPageBackgroundColor)
+    static let groupedBackground = Color(nsColor: .windowBackgroundColor)
+    static let offGray = Color(nsColor: .systemGray)
+    #else
     static let background = Color(.systemBackground)
     static let secondaryBackground = Color(.secondarySystemBackground)
     static let tertiaryBackground = Color(.tertiarySystemBackground)
     static let groupedBackground = Color(.systemGroupedBackground)
+    static let offGray = Color(.systemGray4)
+    #endif
 
     static let onlineGreen = Color.green
     static let warningYellow = Color.yellow
     static let errorRed = Color.red
-    static let offGray = Color(.systemGray4)
 
     // MARK: - Card Style
 
