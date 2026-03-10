@@ -176,6 +176,16 @@ struct PadDashboardView: View {
             Text(appState.api.isConnected ? "Connected" : "Offline")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+
+            if appState.syncService.isSyncing {
+                ProgressView()
+                    .scaleEffect(0.6)
+            } else if let lastSync = appState.syncService.lastSyncDate {
+                Text("Synced \(lastSync.formatted(.relative(presentation: .named)))")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
+
             Spacer()
             Text(appState.selectedBuilding?.name ?? "")
                 .font(.subheadline)

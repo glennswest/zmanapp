@@ -84,6 +84,47 @@ struct SettingsView: View {
                 }
             }
 
+            Section("Sync") {
+                HStack {
+                    Text("Status")
+                    Spacer()
+                    if appState.syncService.isSyncing {
+                        HStack(spacing: 6) {
+                            ProgressView()
+                                .scaleEffect(0.7)
+                            Text("Syncing...")
+                                .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        Text("Idle")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                if let lastSync = appState.syncService.lastSyncDate {
+                    HStack {
+                        Text("Last Sync")
+                        Spacer()
+                        Text(lastSync.formatted(date: .abbreviated, time: .shortened))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                if let syncError = appState.syncService.syncError {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                        Text(syncError)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Button("Sync Now") {
+                    appState.syncService.triggerSync()
+                }
+            }
+
             Section("Account") {
                 Button("Sign Out", role: .destructive) {
                     showLogoutConfirm = true

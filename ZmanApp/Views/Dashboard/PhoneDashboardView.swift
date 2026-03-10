@@ -49,6 +49,16 @@ struct PhoneDashboardView: View {
             Text(appState.api.isConnected ? "Connected" : "Offline")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+
+            if appState.syncService.isSyncing {
+                ProgressView()
+                    .scaleEffect(0.5)
+            } else if let lastSync = appState.syncService.lastSyncDate {
+                Text("Synced \(lastSync.formatted(.relative(presentation: .named)))")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
+
             Spacer()
         }
     }
