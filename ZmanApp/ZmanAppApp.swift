@@ -16,6 +16,16 @@ struct ZmanAppApp: App {
         #if os(macOS)
         .defaultSize(width: 1000, height: 700)
         #endif
+        #if os(macOS)
+        .commands {
+            CommandGroup(after: .toolbar) {
+                Button("Refresh") {
+                    Task { await appState.refreshCurrentBuilding() }
+                }
+                .keyboardShortcut("r", modifiers: .command)
+            }
+        }
+        #endif
         .onChange(of: scenePhase) { _, newPhase in
             switch newPhase {
             case .active:
