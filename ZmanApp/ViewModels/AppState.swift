@@ -17,6 +17,7 @@ final class AppState {
 
     let api = APIService.shared
     let persistence = PersistenceService.shared
+    let syncService = SyncService()
 
     var isWideLayout: Bool {
         PlatformService.isWideDevice
@@ -66,6 +67,28 @@ final class AppState {
 
         isAuthenticated = true
         await loadBuildings()
+        startSyncService()
+    }
+
+    // MARK: - Sync
+
+    private func startSyncService() {
+        syncService.startSync(api: api) { [weak self] buildings in
+            self?.applySyncedData(buildings)
+        }
+    }
+
+    private func applySyncedData(_ freshBuildings: [Building]) {
+        let previousSelectedId = selectedBuilding?.id
+        buildings = freshBuildings
+
+        // Preserve selection
+        if let prevId = previousSelectedId {
+            selectedBuilding = freshBuildings.first(where: { $0.id == prevId })
+        }
+        if selectedBuilding == nil {
+            selectedBuilding = freshBuildings.first
+        }
     }
 
     // MARK: - Data Loading
@@ -159,12 +182,14 @@ final class AppState {
             isAuthenticated = true
             showLogin = false
             await loadBuildings()
+            startSyncService()
         } catch {
             setError(error.localizedDescription)
         }
     }
 
     func logout() {
+        syncService.stopSync()
         api.logout()
         persistence.accessToken = ""
         persistence.refreshToken = ""
