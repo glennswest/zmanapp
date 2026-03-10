@@ -1,24 +1,26 @@
 # Zman
 
-Home and building control app for iPhone and iPad.
+Home and building control app for iPhone, iPad, and Mac.
 
 ## Features
 
 - **Multi-Building Support** — Manage multiple residences/buildings from one app
 - **Dynamic Configuration** — Buildings, areas, and devices loaded from Zman backend API
+- **Periodic Sync** — Automatic polling (30s active, 5min background) keeps data fresh
 - **iPhone (On-the-Go)** — Quick garage actions, area grid, pull-to-refresh dashboard
-- **iPad (Fixed Install)** — Three modes:
+- **iPad (Fixed Install)** — Three display modes:
   - **General Mode** — Full sidebar navigation, dashboard overview (living room iPad)
   - **Room Mode** — Locked to a specific room's controls (mounted room iPad)
   - **Garage Mode** — Dedicated garage door and sensor controls (garage iPad)
+- **Mac** — Native macOS app with NavigationSplitView layout, Settings in app menu, Cmd+R refresh
 - **Widget Organization** — Physical and virtual widgets with category grouping and filtering
-- **WidgetKit** — Home screen widgets for quick device status and one-tap control
+- **WidgetKit** — Home screen widgets for quick device status and one-tap control (iOS only)
 - **Cloudflare Tunnel** — Secure remote access through Cloudflare tunnel
-- **Keychain Auth** — Tokens stored securely in iOS Keychain
+- **Keychain Auth** — Tokens stored securely in Keychain
 
 ## Requirements
 
-- iOS 17.0+
+- iOS 17.0+ / macOS 14.0+
 - Xcode 16.0+
 - Swift 6.0+
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) (for project generation)
@@ -40,8 +42,9 @@ open ZmanApp.xcodeproj
 
 - **SwiftUI** — Declarative UI framework
 - **MVVM** — Model-View-ViewModel pattern with `@Observable`
-- **Adaptive Layout** — `UIDevice.userInterfaceIdiom` for iPhone vs iPad experience
-- **WidgetKit** — Home screen widget extension
+- **Adaptive Layout** — `PlatformService` detects phone/pad/mac for layout routing
+- **SyncService** — Periodic background polling with scenePhase-aware intervals
+- **WidgetKit** — Home screen widget extension (iOS only)
 
 ### Project Structure
 
@@ -54,12 +57,12 @@ ZmanApp/
 │   ├── Garage/      — GarageView, GarageDoorControl
 │   ├── Room/        — RoomView with category grid
 │   ├── Residence/   — LoginView, OnboardingView
-│   ├── Settings/    — SettingsView (server, iPad mode, building picker)
+│   ├── Settings/    — SettingsView (server, display mode, sync status, building picker)
 │   └── Components/  — StatusBadge, QuickActionButton, WidgetCard, etc.
-├── Services/        — APIService, PersistenceService
+├── Services/        — APIService, PersistenceService, PlatformService, SyncService
 └── Theme/           — AppTheme (colors, spacing, grid layouts)
 
-ZmanWidgets/         — WidgetKit extension (QuickAction + Status widgets)
+ZmanWidgets/         — WidgetKit extension (QuickAction + Status widgets, iOS only)
 ```
 
 ## Backend API
@@ -80,4 +83,4 @@ The app expects a Zman backend API accessible via Cloudflare tunnel:
 
 ## Version
 
-Current: `0.1.0`
+Current: `0.2.0`
