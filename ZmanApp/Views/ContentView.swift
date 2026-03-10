@@ -9,7 +9,7 @@ struct ContentView: View {
                 OnboardingView()
             } else if appState.showLogin {
                 LoginView()
-            } else if appState.isIPad {
+            } else if appState.isWideLayout {
                 PadDashboardView()
             } else {
                 PhoneDashboardView()

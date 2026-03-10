@@ -35,7 +35,9 @@ struct LoginView: View {
                     TextField("Username", text: $username)
                         .textContentType(.username)
                         .autocorrectionDisabled()
+                        #if os(iOS)
                         .textInputAutocapitalization(.never)
+                        #endif
                         .focused($focusedField, equals: .username)
                         .padding()
                         .background(AppTheme.secondaryBackground)

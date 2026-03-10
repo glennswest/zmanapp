@@ -61,23 +61,23 @@ final class PersistenceService: ObservableObject, Sendable {
         set { defaults.set(newValue?.uuidString, forKey: Keys.selectedAreaId) }
     }
 
-    // MARK: - iPad Mode
+    // MARK: - Display Mode
 
-    enum IPadDisplayMode: String {
+    enum DisplayMode: String {
         case general
         case room
         case garage
     }
 
-    var ipadMode: IPadDisplayMode {
+    var displayMode: DisplayMode {
         get {
             guard let raw = defaults.string(forKey: Keys.ipadMode) else { return .general }
-            return IPadDisplayMode(rawValue: raw) ?? .general
+            return DisplayMode(rawValue: raw) ?? .general
         }
         set { defaults.set(newValue.rawValue, forKey: Keys.ipadMode) }
     }
 
-    var ipadAssignedAreaId: UUID? {
+    var assignedAreaId: UUID? {
         get {
             guard let str = defaults.string(forKey: Keys.ipadAssignedAreaId) else { return nil }
             return UUID(uuidString: str)
@@ -134,8 +134,8 @@ final class PersistenceService: ObservableObject, Sendable {
         refreshToken = ""
         selectedBuildingId = nil
         selectedAreaId = nil
-        ipadMode = .general
-        ipadAssignedAreaId = nil
+        displayMode = .general
+        assignedAreaId = nil
         onboardingComplete = false
     }
 }

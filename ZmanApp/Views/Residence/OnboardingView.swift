@@ -11,8 +11,10 @@ struct OnboardingView: View {
                 welcomePage.tag(0)
                 serverPage.tag(1)
             }
+            #if os(iOS)
             .tabViewStyle(.page(indexDisplayMode: .always))
             .indexViewStyle(.page(backgroundDisplayMode: .always))
+            #endif
         }
         .background(AppTheme.background)
     }
@@ -89,9 +91,11 @@ struct OnboardingView: View {
 
             VStack(spacing: 16) {
                 TextField("https://home.example.com", text: $serverURL)
+                    #if os(iOS)
                     .keyboardType(.URL)
-                    .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
+                    #endif
+                    .autocorrectionDisabled()
                     .textContentType(.URL)
                     .padding()
                     .background(AppTheme.secondaryBackground)

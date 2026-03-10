@@ -26,22 +26,22 @@ struct SettingsView: View {
                 }
             }
 
-            if appState.isIPad {
-                Section("iPad Mode") {
+            if appState.isWideLayout {
+                Section("Display Mode") {
                     Picker("Display Mode", selection: Binding(
-                        get: { appState.persistence.ipadMode },
-                        set: { appState.persistence.ipadMode = $0 }
+                        get: { appState.persistence.displayMode },
+                        set: { appState.persistence.displayMode = $0 }
                     )) {
-                        Text("General").tag(PersistenceService.IPadDisplayMode.general)
-                        Text("Room").tag(PersistenceService.IPadDisplayMode.room)
-                        Text("Garage").tag(PersistenceService.IPadDisplayMode.garage)
+                        Text("General").tag(PersistenceService.DisplayMode.general)
+                        Text("Room").tag(PersistenceService.DisplayMode.room)
+                        Text("Garage").tag(PersistenceService.DisplayMode.garage)
                     }
                     .pickerStyle(.segmented)
 
-                    if appState.persistence.ipadMode == .room {
+                    if appState.persistence.displayMode == .room {
                         Picker("Assigned Area", selection: Binding(
-                            get: { appState.persistence.ipadAssignedAreaId },
-                            set: { appState.persistence.ipadAssignedAreaId = $0 }
+                            get: { appState.persistence.assignedAreaId },
+                            set: { appState.persistence.assignedAreaId = $0 }
                         )) {
                             Text("Not Assigned").tag(nil as UUID?)
                             ForEach(appState.currentAreas) { area in
@@ -50,7 +50,7 @@ struct SettingsView: View {
                         }
                     }
 
-                    Text(ipadModeDescription)
+                    Text(displayModeDescription)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -110,14 +110,14 @@ struct SettingsView: View {
         }
     }
 
-    private var ipadModeDescription: String {
-        switch appState.persistence.ipadMode {
+    private var displayModeDescription: String {
+        switch appState.persistence.displayMode {
         case .general:
-            "Shows the full dashboard with sidebar navigation. Best for a central living room iPad."
+            "Shows the full dashboard with sidebar navigation. Best for a central display."
         case .room:
-            "Shows only the assigned room's controls. Best for iPads mounted in specific rooms."
+            "Shows only the assigned room's controls. Best for dedicated room displays."
         case .garage:
-            "Shows garage controls prominently. Best for an iPad in the garage."
+            "Shows garage controls prominently. Best for a garage display."
         }
     }
 }

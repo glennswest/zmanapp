@@ -5,8 +5,8 @@ struct PadDashboardView: View {
     @State private var selectedArea: Area?
     @State private var columnVisibility = NavigationSplitViewVisibility.all
 
-    private var displayMode: PersistenceService.IPadDisplayMode {
-        appState.persistence.ipadMode
+    private var displayMode: PersistenceService.DisplayMode {
+        appState.persistence.displayMode
     }
 
     var body: some View {
@@ -119,7 +119,7 @@ struct PadDashboardView: View {
 
     private var roomMode: some View {
         Group {
-            if let areaId = appState.persistence.ipadAssignedAreaId,
+            if let areaId = appState.persistence.assignedAreaId,
                let area = appState.currentAreas.first(where: { $0.id == areaId }) {
                 NavigationStack {
                     RoomView(area: area)
