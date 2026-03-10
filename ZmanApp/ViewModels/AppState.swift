@@ -1,8 +1,5 @@
 import Foundation
 import SwiftUI
-#if canImport(UIKit)
-import UIKit
-#endif
 
 @MainActor
 @Observable
@@ -21,8 +18,8 @@ final class AppState {
     let api = APIService.shared
     let persistence = PersistenceService.shared
 
-    var isIPad: Bool {
-        UIDevice.current.userInterfaceIdiom == .pad
+    var isWideLayout: Bool {
+        PlatformService.isWideDevice
     }
 
     var currentAreas: [Area] {

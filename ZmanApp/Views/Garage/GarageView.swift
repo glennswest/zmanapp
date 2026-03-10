@@ -158,6 +158,6 @@ struct GarageView: View {
     }
 
     private var gridColumns: [GridItem] {
-        UIDevice.current.userInterfaceIdiom == .pad ? AppTheme.padColumns : AppTheme.phoneColumns
+        PlatformService.isWideDevice ? AppTheme.padColumns : AppTheme.phoneColumns
     }
 }
