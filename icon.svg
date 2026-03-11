@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
+    </linearGradient>
+    <linearGradient id="bolt" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#ffd700"/>
+      <stop offset="50%" stop-color="#ffaa00"/>
+      <stop offset="100%" stop-color="#ff8800"/>
+    </linearGradient>
+    <linearGradient id="zgrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0e8ff"/>
+      <stop offset="100%" stop-color="#a0b4e8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background with rounded corners -->
+  <rect width="1024" height="1024" rx="224" ry="224" fill="url(#bg)"/>
+
+  <!-- Subtle inner glow -->
+  <rect x="40" y="40" width="944" height="944" rx="194" ry="194" fill="none" stroke="#2a3a5e" stroke-width="2" opacity="0.5"/>
+
+  <!-- Z letter - bold geometric style -->
+  <!-- Top horizontal bar -->
+  <polygon points="200,200 824,200 824,310 200,310" fill="url(#zgrad)"/>
+  <!-- Diagonal -->
+  <polygon points="620,310 824,310 404,714 200,714" fill="url(#zgrad)"/>
+  <!-- Bottom horizontal bar -->
+  <polygon points="200,714 824,714 824,824 200,824" fill="url(#zgrad)"/>
+
+  <!-- Lightning bolt through the Z -->
+  <polygon points="
+    560,120
+    410,480
+    520,480
+    440,920
+    640,500
+    520,500
+    620,120
+  " fill="url(#bolt)" stroke="#1a1a2e" stroke-width="12" stroke-linejoin="round"/>
+
+  <!-- Lightning bolt inner highlight -->
+  <polygon points="
+    570,170
+    435,470
+    530,470
+    460,870
+    625,510
+    530,510
+    610,170
+  " fill="none" stroke="#ffe566" stroke-width="3" stroke-linejoin="round" opacity="0.5"/>
+</svg>

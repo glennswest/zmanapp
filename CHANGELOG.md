@@ -26,6 +26,7 @@
 
 ### 2026-03-11
 - **chore:** Switch to automatic code signing with development team for device builds
+- **feat:** Add app icon — bold Z with lightning bolt on dark navy background
 
 ## [v0.1.0] — 2026-03-07
 
