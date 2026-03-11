@@ -24,6 +24,9 @@
 
 ## [Unreleased]
 
+### 2026-03-11
+- **chore:** Switch to automatic code signing with development team for device builds
+
 ## [v0.1.0] — 2026-03-07
 
 ### Added

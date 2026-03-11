@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04652ACD87FFE54526A9BDD6 /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1397A1EFC706FA4B58A395 /* SyncService.swift */; };
 		20B55D2CC6E2FE50BAF8C0AB /* Residence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E06723018FFE44F784C2F9E /* Residence.swift */; };
 		260A4F62D51CAB5473D27BBC /* GarageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB2B29BEBA4C8D0C2B08DAD /* GarageViewModel.swift */; };
 		3299827561255748F1201689 /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C1BB6EE09E49896DA591EC /* RoomView.swift */; };
-		33835D41C58D10E6765E4EDF /* ZmanWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E4A4ADFF146D7155E6FD68CD /* ZmanWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		3DDCB708E21794C52FEDC4B2 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD8F1FC7F8683ACEE04626E /* LoginView.swift */; };
 		40A5714B055AFEB69BABBA46 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607F71E6405BFA0738878200 /* APIService.swift */; };
 		4502DBB74A3728B3336CCED4 /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C6FAACC61C8443CA49C8533 /* SectionHeader.swift */; };
@@ -18,6 +18,7 @@
 		4D25152111D74394ACA8BA87 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6194A063B565275AACD1E1F5 /* OnboardingView.swift */; };
 		5644250C6E9EFC7548364A38 /* PadDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62998EC46CCBE304A045E82E /* PadDashboardView.swift */; };
 		56AD6227B6C7E03EADCF66A2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D3B76980B99A03AFA21BC8 /* ContentView.swift */; };
+		5A2FB3684060AF362AD67131 /* PlatformService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A03D8276AA287C55BBC4A913 /* PlatformService.swift */; };
 		5C42D750014B1CF75C5BEBB0 /* QuickActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25588149DA33727920D7382 /* QuickActionButton.swift */; };
 		671070867CF0447C98AFCF36 /* TunnelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61F96D36E6F61A61807F28B /* TunnelConfig.swift */; };
 		69E293D57F404927F2674E3C /* ZmanWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BA2B3327D41B10E4303876 /* ZmanWidgets.swift */; };
@@ -37,30 +38,6 @@
 		F7B750EA7F0E975C2DF8BE48 /* PhoneDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB5ECBB416D3B872448145 /* PhoneDashboardView.swift */; };
 		FC2144AD1BB28F87E2029AB3 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2FB4E1E2BB2D27ED97AB56F /* AppTheme.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		67EFE4B9F24028E7F8781B5B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3A413FB5CC442F631FBCDFFF /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 28F61C1EFF1C54CFD668659C;
-			remoteInfo = ZmanWidgets;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		518A2BAFF0F1869DAF15CFF9 /* Embed Foundation Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				33835D41C58D10E6765E4EDF /* ZmanWidgets.appex in Embed Foundation Extensions */,
-			);
-			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0BB1A4022AA1DC4262A173EB /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
@@ -84,11 +61,13 @@
 		84BA2B3327D41B10E4303876 /* ZmanWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZmanWidgets.swift; sourceTree = "<group>"; };
 		927DBBE24DD0C6047D6AB69F /* GarageDoorControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageDoorControl.swift; sourceTree = "<group>"; };
 		971612C7CEC12CA33F46D10E /* DeviceWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceWidget.swift; sourceTree = "<group>"; };
+		A03D8276AA287C55BBC4A913 /* PlatformService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformService.swift; sourceTree = "<group>"; };
 		A25588149DA33727920D7382 /* QuickActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionButton.swift; sourceTree = "<group>"; };
 		A2FB4E1E2BB2D27ED97AB56F /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		A44EF9B7B1953FA19FBAB921 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ACD8F1FC7F8683ACEE04626E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		B61F96D36E6F61A61807F28B /* TunnelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelConfig.swift; sourceTree = "<group>"; };
+		BB1397A1EFC706FA4B58A395 /* SyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncService.swift; sourceTree = "<group>"; };
 		CE4E5A2E95C364574F3A1630 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		D9C1BB6EE09E49896DA591EC /* RoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
 		E4A4ADFF146D7155E6FD68CD /* ZmanWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ZmanWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -185,6 +164,8 @@
 			children = (
 				607F71E6405BFA0738878200 /* APIService.swift */,
 				5F2D1C24D3A46360EF2EC824 /* PersistenceService.swift */,
+				A03D8276AA287C55BBC4A913 /* PlatformService.swift */,
+				BB1397A1EFC706FA4B58A395 /* SyncService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -283,12 +264,10 @@
 			buildPhases = (
 				6DB57B38C21F6ABCBEC6AB26 /* Sources */,
 				24D240DBBA60A0B689604619 /* Resources */,
-				518A2BAFF0F1869DAF15CFF9 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				AF7FCD3E5B675A257A4B9560 /* PBXTargetDependency */,
 			);
 			name = ZmanApp;
 			packageProductDependencies = (
@@ -307,12 +286,12 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					28F61C1EFF1C54CFD668659C = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = 24MSLHRERR;
+						ProvisioningStyle = Automatic;
 					};
 					E71A813C1057A03D95C61609 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = 24MSLHRERR;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -382,6 +361,7 @@
 				5644250C6E9EFC7548364A38 /* PadDashboardView.swift in Sources */,
 				6D01382F5D594033603451F3 /* PersistenceService.swift in Sources */,
 				F7B750EA7F0E975C2DF8BE48 /* PhoneDashboardView.swift in Sources */,
+				5A2FB3684060AF362AD67131 /* PlatformService.swift in Sources */,
 				5C42D750014B1CF75C5BEBB0 /* QuickActionButton.swift in Sources */,
 				20B55D2CC6E2FE50BAF8C0AB /* Residence.swift in Sources */,
 				B6B82090880ED2CC25F49C74 /* Room.swift in Sources */,
@@ -390,6 +370,7 @@
 				4502DBB74A3728B3336CCED4 /* SectionHeader.swift in Sources */,
 				F266D5BBDBF71B2B3C96A1C1 /* SettingsView.swift in Sources */,
 				D549B04B7600532C16407860 /* StatusBadge.swift in Sources */,
+				04652ACD87FFE54526A9BDD6 /* SyncService.swift in Sources */,
 				671070867CF0447C98AFCF36 /* TunnelConfig.swift in Sources */,
 				C787652270ACB93BF42A6E56 /* WidgetCard.swift in Sources */,
 				6A067E003083DCEBEE62B5FA /* ZmanAppApp.swift in Sources */,
@@ -397,14 +378,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		AF7FCD3E5B675A257A4B9560 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 28F61C1EFF1C54CFD668659C /* ZmanWidgets */;
-			targetProxy = 67EFE4B9F24028E7F8781B5B /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		0594144F15CD1FEC36C6F286 /* Release */ = {
@@ -440,11 +413,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 24MSLHRERR;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -456,11 +429,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.1.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -492,15 +465,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = ZmanApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zmanapp.app;
 				PRODUCT_NAME = Zman;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -511,15 +486,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = ZmanApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zmanapp.app;
 				PRODUCT_NAME = Zman;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -557,11 +534,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 24MSLHRERR;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -579,12 +556,12 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.1.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = complete;
