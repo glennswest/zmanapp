@@ -195,7 +195,8 @@ final class APIService: ObservableObject, Sendable {
             do {
                 return try decoder.decode(T.self, from: data)
             } catch {
-                throw APIError.decodingError(error)
+                let raw = String(data: data.prefix(500), encoding: .utf8) ?? "<binary>"
+                throw APIError.serverError(httpResponse.statusCode, "\(url)\nDecode failed: \(error.localizedDescription)\nBody: \(raw)")
             }
         case 401:
             isAuthenticated = false
