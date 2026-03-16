@@ -196,6 +196,18 @@ struct SettingsView: View {
                 .navigationTitle("Debug Log")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            #if os(iOS)
+                            UIPasteboard.general.string = appState.debugLog.joined(separator: "\n")
+                            #else
+                            NSPasteboard.general.clearContents()
+                            NSPasteboard.general.setString(appState.debugLog.joined(separator: "\n"), forType: .string)
+                            #endif
+                        } label: {
+                            Label("Copy All", systemImage: "doc.on.doc")
+                        }
+                    }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") { showLog = false }
                     }
