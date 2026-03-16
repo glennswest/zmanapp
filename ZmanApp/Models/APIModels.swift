@@ -80,17 +80,19 @@ struct Building: Identifiable, Codable, Hashable {
     var address: String
     var areas: [Area]
     var tunnelURL: String
+    var tempUnit: String
 
     enum CodingKeys: String, CodingKey {
-        case id, name, address, areas, tunnelURL
+        case id, name, address, areas, tunnelURL, tempUnit
     }
 
-    init(id: String, name: String, address: String = "", areas: [Area] = [], tunnelURL: String = "") {
+    init(id: String, name: String, address: String = "", areas: [Area] = [], tunnelURL: String = "", tempUnit: String = "C") {
         self.id = id
         self.name = name
         self.address = address
         self.areas = areas
         self.tunnelURL = tunnelURL
+        self.tempUnit = tempUnit
     }
 
     init(from decoder: Decoder) throws {
@@ -100,6 +102,7 @@ struct Building: Identifiable, Codable, Hashable {
         address = try c.decodeIfPresent(String.self, forKey: .address) ?? ""
         areas = try c.decodeIfPresent([Area].self, forKey: .areas) ?? []
         tunnelURL = try c.decodeIfPresent(String.self, forKey: .tunnelURL) ?? ""
+        tempUnit = try c.decodeIfPresent(String.self, forKey: .tempUnit) ?? "C"
     }
 }
 

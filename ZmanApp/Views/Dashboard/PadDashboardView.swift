@@ -81,14 +81,28 @@ struct PadDashboardView: View {
         }
     }
 
+    private var dashboardCells: [DashboardCell] {
+        var cells: [DashboardCell] = []
+        for widget in appState.currentDashboardWidgets {
+            if widget.widgetType == .thermostat {
+                cells.append(.thermostatSetpoint(widget))
+                cells.append(.thermostatRoom(widget))
+                cells.append(.thermostatFan(widget))
+            } else {
+                cells.append(.widget(widget))
+            }
+        }
+        return cells
+    }
+
     private var dashboardDetail: some View {
         ScrollView {
             VStack(spacing: 16) {
                 connectionHeader
 
                 LazyVGrid(columns: AppTheme.padColumns, spacing: 16) {
-                    ForEach(appState.currentDashboardWidgets) { widget in
-                        DashboardWidgetView(widget: widget)
+                    ForEach(dashboardCells) { cell in
+                        DashboardCellView(cell: cell)
                     }
                 }
             }

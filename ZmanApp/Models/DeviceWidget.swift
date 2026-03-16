@@ -17,6 +17,17 @@ enum WidgetType: String, Hashable, Sendable {
         if deviceId.hasPrefix("virtual.weather.") { return .weather }
         return .unknown
     }
+
+    static func fromRaw(_ raw: String) -> WidgetType {
+        switch raw {
+        case "garage": .garage
+        case "hvac": .thermostat
+        case "sensor": .sensor
+        case "weather", "forecast": .weather
+        case "plug": .plug
+        default: .unknown
+        }
+    }
 }
 
 // MARK: - Property Value (flexible JSON value)
@@ -85,9 +96,15 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
     var dashboardId: String
     var properties: [String: PropertyValue]
     var sortOrder: Int
+    var widgetTypeRaw: String?
+    var widgetProperty: String?
 
     var widgetType: WidgetType {
-        WidgetType.infer(from: deviceId)
+        if let raw = widgetTypeRaw {
+            let t = WidgetType.fromRaw(raw)
+            if t != .unknown { return t }
+        }
+        return WidgetType.infer(from: deviceId)
     }
 
     // MARK: - Convenience Accessors
@@ -113,11 +130,23 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
     /// Wind speed
     var windSpeed: Double? { properties["windSpeed"]?.doubleValue }
 
+    /// Wind direction in degrees
+    var windDirection: Double? { properties["windDirection"]?.doubleValue }
+
+    /// Weather condition text (e.g., "Partly cloudy")
+    var condition: String? { properties["condition"]?.stringValue }
+
     /// Weather code (WMO)
     var weatherCode: Int? {
         if let n = properties["weatherCode"]?.doubleValue { return Int(n) }
         return nil
     }
+
+    /// Thermostat mode (heat/cool/auto)
+    var thermostatMode: String? { properties["thermostatMode"]?.stringValue }
+
+    /// Thermostat state (heating/cooling/idle)
+    var thermostatState: String? { properties["thermostatState"]?.stringValue }
 
     // Garage convenience
     var isGarageClosed: Bool { state == "closed" }
@@ -142,15 +171,19 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
 
     enum CodingKeys: String, CodingKey {
         case id, deviceId, label, name, dashboardId, properties, sortOrder, order
+        case widgetTypeRaw = "type"
+        case widgetProperty = "property"
     }
 
-    init(id: String, deviceId: String, label: String, dashboardId: String = "default", properties: [String: PropertyValue] = [:], sortOrder: Int = 0) {
+    init(id: String, deviceId: String, label: String, dashboardId: String = "default", properties: [String: PropertyValue] = [:], sortOrder: Int = 0, widgetTypeRaw: String? = nil, widgetProperty: String? = nil) {
         self.id = id
         self.deviceId = deviceId
         self.label = label
         self.dashboardId = dashboardId
         self.properties = properties
         self.sortOrder = sortOrder
+        self.widgetTypeRaw = widgetTypeRaw
+        self.widgetProperty = widgetProperty
     }
 
     init(from decoder: Decoder) throws {
@@ -165,6 +198,8 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
         let so = try c.decodeIfPresent(Int.self, forKey: .sortOrder)
         let o = try c.decodeIfPresent(Int.self, forKey: .order)
         sortOrder = so ?? o ?? 0
+        widgetTypeRaw = try c.decodeIfPresent(String.self, forKey: .widgetTypeRaw)
+        widgetProperty = try c.decodeIfPresent(String.self, forKey: .widgetProperty)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -175,5 +210,7 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
         try c.encode(dashboardId, forKey: .dashboardId)
         try c.encode(properties, forKey: .properties)
         try c.encode(sortOrder, forKey: .sortOrder)
+        try c.encodeIfPresent(widgetTypeRaw, forKey: .widgetTypeRaw)
+        try c.encodeIfPresent(widgetProperty, forKey: .widgetProperty)
     }
 }
