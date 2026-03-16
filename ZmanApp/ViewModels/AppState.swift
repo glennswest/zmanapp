@@ -116,9 +116,21 @@ final class AppState {
 
         pollTask = Task { [weak self] in
             guard let self else { return }
+            var consecutiveErrors = 0
+            let maxErrors = 5
+            let maxPollDuration: TimeInterval = 300 // 5 minutes
+            let startTime = Date()
+
             while !Task.isCancelled {
+                // Give up after 5 minutes of polling
+                if Date().timeIntervalSince(startTime) > maxPollDuration {
+                    self.setError("Timed out waiting for email confirmation. Please try again.")
+                    return
+                }
+
                 do {
                     let response = try await self.cloud.poll(email: self.claimEmail)
+                    consecutiveErrors = 0 // reset on success
                     if response.status == "ready", let claims = response.claims, !claims.isEmpty {
                         self.pendingClaims = claims
                         self.claimPhase = .claiming
@@ -128,11 +140,18 @@ final class AppState {
                     }
                     // Still pending — wait before next poll
                     try await Task.sleep(for: .seconds(3))
-                } catch {
-                    if !Task.isCancelled {
-                        self.setError(error.localizedDescription)
-                    }
+                } catch is CancellationError {
                     return
+                } catch {
+                    consecutiveErrors += 1
+                    if consecutiveErrors >= maxErrors {
+                        if !Task.isCancelled {
+                            self.setError(error.localizedDescription)
+                        }
+                        return
+                    }
+                    // Transient error — back off and retry
+                    try? await Task.sleep(for: .seconds(Double(consecutiveErrors) * 2))
                 }
             }
         }

@@ -25,6 +25,8 @@
 ## [Unreleased]
 
 ### 2026-03-16
+- **fix:** Add retry tolerance to claim poll loop — transient errors no longer kill the flow
+- **fix:** Increase cloud service timeouts (30s request / 60s resource) for email verification
 - **feat:** Implement cloud claim authentication flow (email magic link → claim token → API key)
 - **feat:** Add CloudService for cloud.zmanapp.com worker endpoints (connect, poll, claim)
 - **feat:** Add X-API-Key header auth support to APIService
