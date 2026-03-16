@@ -104,7 +104,7 @@ struct Building: Identifiable, Codable, Hashable {
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        id = try c.decode(String.self, forKey: .id)
+        id = try c.decodeIfPresent(String.self, forKey: .id) ?? UUID().uuidString
         name = try c.decodeIfPresent(String.self, forKey: .name) ?? "Home"
         address = try c.decodeIfPresent(String.self, forKey: .address) ?? ""
         areas = try c.decodeIfPresent([Area].self, forKey: .areas) ?? []
@@ -123,7 +123,7 @@ struct Area: Identifiable, Codable, Hashable {
     var sortOrder: Int
 
     enum CodingKeys: String, CodingKey {
-        case id, name, icon, mode, widgets, sortOrder
+        case id, name, icon, mode, widgets, sortOrder, order
     }
 
     init(id: String, name: String, icon: String = "square.grid.2x2.fill", mode: RoomMode = .general, widgets: [DeviceWidget] = [], sortOrder: Int = 0) {
@@ -142,6 +142,18 @@ struct Area: Identifiable, Codable, Hashable {
         icon = try c.decodeIfPresent(String.self, forKey: .icon) ?? "square.grid.2x2.fill"
         mode = try c.decodeIfPresent(RoomMode.self, forKey: .mode) ?? .general
         widgets = try c.decodeIfPresent([DeviceWidget].self, forKey: .widgets) ?? []
-        sortOrder = try c.decodeIfPresent(Int.self, forKey: .sortOrder) ?? 0
+        let so = try c.decodeIfPresent(Int.self, forKey: .sortOrder)
+        let o = try c.decodeIfPresent(Int.self, forKey: .order)
+        sortOrder = so ?? o ?? 0
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(name, forKey: .name)
+        try c.encode(icon, forKey: .icon)
+        try c.encode(mode, forKey: .mode)
+        try c.encode(widgets, forKey: .widgets)
+        try c.encode(sortOrder, forKey: .sortOrder)
     }
 }

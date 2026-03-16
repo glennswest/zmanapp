@@ -132,10 +132,23 @@ final class APIService: ObservableObject, Sendable {
     // MARK: - Health
 
     func checkConnection() async -> Bool {
+        guard !baseURL.isEmpty else { return false }
+        guard let url = URL(string: baseURL + "/api/v1/health") else { return false }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        if !apiKey.isEmpty {
+            request.setValue(apiKey, forHTTPHeaderField: "X-API-Key")
+        } else if !accessToken.isEmpty {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+
         do {
-            let _: APIResponse<String> = try await get("/api/v1/health")
-            isConnected = true
-            return true
+            let (_, response) = try await session.data(for: request)
+            let ok = (response as? HTTPURLResponse)?.statusCode == 200
+            isConnected = ok
+            return ok
         } catch {
             isConnected = false
             return false

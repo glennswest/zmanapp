@@ -93,19 +93,23 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
 
     // Custom decoding with defaults for optional server fields
     enum CodingKeys: String, CodingKey {
-        case id, name, kind, category, state, roomId, icon, sortOrder, metadata
+        case id, name, label, kind, category, state, roomId, icon, sortOrder, order, metadata
     }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(String.self, forKey: .id)
-        name = try c.decode(String.self, forKey: .name)
+        let n = try c.decodeIfPresent(String.self, forKey: .name)
+        let l = try c.decodeIfPresent(String.self, forKey: .label)
+        name = n ?? l ?? "Widget"
         kind = try c.decodeIfPresent(WidgetKind.self, forKey: .kind) ?? .physical
         category = try c.decodeIfPresent(WidgetCategory.self, forKey: .category) ?? .custom
         state = try c.decodeIfPresent(WidgetState.self, forKey: .state) ?? .unknown
         roomId = try c.decodeIfPresent(String.self, forKey: .roomId)
         icon = try c.decodeIfPresent(String.self, forKey: .icon)
-        sortOrder = try c.decodeIfPresent(Int.self, forKey: .sortOrder) ?? 0
+        let so = try c.decodeIfPresent(Int.self, forKey: .sortOrder)
+        let o = try c.decodeIfPresent(Int.self, forKey: .order)
+        sortOrder = so ?? o ?? 0
         metadata = try c.decodeIfPresent([String: String].self, forKey: .metadata) ?? [:]
     }
 
