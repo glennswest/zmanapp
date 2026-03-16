@@ -22,6 +22,9 @@ struct OnboardingView: View {
             if appState.claimPhase == .idle {
                 appState.claimPhase = .enterEmail
             }
+            if email.isEmpty {
+                email = appState.persistence.claimEmail
+            }
         }
     }
 

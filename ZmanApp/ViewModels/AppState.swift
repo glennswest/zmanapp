@@ -191,7 +191,7 @@ final class AppState {
             await loadBuildings()
             startSyncService()
         } catch {
-            setError("Failed to connect to hub: \(error.localizedDescription)")
+            setError("Claim failed → \(hubURL)/api/v1/auth/claim: \(error.localizedDescription)")
             claimPhase = .enterEmail
         }
     }
