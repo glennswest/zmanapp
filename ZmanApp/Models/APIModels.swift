@@ -66,19 +66,10 @@ struct ClaimResponse: Codable {
     let hostname: String
 }
 
-// MARK: - Widget Commands
+// MARK: - Device Commands
 
-struct WidgetCommand: Codable {
-    let widgetId: String
-    let action: String
-    let parameters: [String: String]?
-}
-
-struct WidgetCommandResult: Codable {
-    let widgetId: String
-    let success: Bool
-    let newState: WidgetState?
-    let message: String?
+struct DeviceCommand: Codable {
+    let command: String
 }
 
 // MARK: - Building (Home/Building)

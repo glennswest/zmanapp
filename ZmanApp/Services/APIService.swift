@@ -105,28 +105,38 @@ final class APIService: ObservableObject, Sendable {
         try await get("/api/v1/buildings/\(buildingId)/areas/\(areaId)")
     }
 
-    // MARK: - Widgets
+    // MARK: - Device Commands
 
-    func fetchWidgets(buildingId: String, areaId: String? = nil) async throws -> [DeviceWidget] {
-        var path = "/api/v1/buildings/\(buildingId)/widgets"
-        if let areaId {
-            path = "/api/v1/buildings/\(buildingId)/areas/\(areaId)/widgets"
+    func sendDeviceCommand(deviceId: String, command: String) async throws {
+        var request = try buildRequest(path: "/api/v1/devices/\(deviceId)/command", method: "POST")
+        request.httpBody = try encoder.encode(DeviceCommand(command: command))
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let data: Data
+        let response: URLResponse
+
+        do {
+            (data, response) = try await session.data(for: request)
+        } catch {
+            throw APIError.networkError(error)
         }
-        return try await get(path)
-    }
 
-    func sendCommand(_ command: WidgetCommand) async throws -> WidgetCommandResult {
-        try await post("/api/v1/widgets/\(command.widgetId)/command", body: command)
-    }
+        guard let http = response as? HTTPURLResponse else {
+            throw APIError.networkError(
+                NSError(domain: "APIService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+            )
+        }
 
-    func toggleWidget(id: String) async throws -> WidgetCommandResult {
-        let command = WidgetCommand(widgetId: id, action: "toggle", parameters: nil)
-        return try await sendCommand(command)
-    }
-
-    func setWidgetState(id: String, action: String, parameters: [String: String]? = nil) async throws -> WidgetCommandResult {
-        let command = WidgetCommand(widgetId: id, action: action, parameters: parameters)
-        return try await sendCommand(command)
+        switch http.statusCode {
+        case 200...299:
+            return // success
+        case 401:
+            isAuthenticated = false
+            throw APIError.unauthorized
+        default:
+            let body = String(data: data, encoding: .utf8)
+            throw APIError.serverError(http.statusCode, body)
+        }
     }
 
     // MARK: - Health

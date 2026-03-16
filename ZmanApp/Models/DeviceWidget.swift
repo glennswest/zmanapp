@@ -1,128 +1,179 @@
 import Foundation
 
-enum WidgetKind: String, Codable, Hashable, CaseIterable {
-    case physical
-    case virtual
-}
+// MARK: - Widget Type (inferred from device_id)
 
-enum WidgetCategory: String, Codable, Hashable, CaseIterable {
-    case light
-    case lock
-    case garageDoor
+enum WidgetType: String, Hashable, Sendable {
+    case garage
     case thermostat
-    case camera
     case sensor
-    case media
-    case switch_
-    case blinds
-    case fan
-    case sprinkler
-    case custom
-
-    var displayName: String {
-        switch self {
-        case .light: "Light"
-        case .lock: "Lock"
-        case .garageDoor: "Garage Door"
-        case .thermostat: "Thermostat"
-        case .camera: "Camera"
-        case .sensor: "Sensor"
-        case .media: "Media"
-        case .switch_: "Switch"
-        case .blinds: "Blinds"
-        case .fan: "Fan"
-        case .sprinkler: "Sprinkler"
-        case .custom: "Custom"
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .light: "lightbulb.fill"
-        case .lock: "lock.fill"
-        case .garageDoor: "door.garage.closed"
-        case .thermostat: "thermometer.medium"
-        case .camera: "video.fill"
-        case .sensor: "sensor.fill"
-        case .media: "play.circle.fill"
-        case .switch_: "power"
-        case .blinds: "blinds.vertical.closed"
-        case .fan: "fan.fill"
-        case .sprinkler: "sprinkler.and.droplets.fill"
-        case .custom: "gearshape.fill"
-        }
-    }
-}
-
-enum WidgetState: Codable, Hashable {
-    case on
-    case off
-    case open
-    case closed
-    case opening
-    case closing
-    case locked
-    case unlocked
-    case value(Double)
+    case weather
+    case plug
     case unknown
+
+    static func infer(from deviceId: String) -> WidgetType {
+        if deviceId.hasPrefix("virtual.esphome.") { return .garage }
+        if deviceId.hasPrefix("virtual.hvac.") { return .thermostat }
+        if deviceId.hasPrefix("zwave.") { return .sensor }
+        if deviceId.hasPrefix("virtual.weather.") { return .weather }
+        return .unknown
+    }
 }
+
+// MARK: - Property Value (flexible JSON value)
+
+enum PropertyValue: Codable, Hashable, Sendable {
+    case string(String)
+    case number(Double)
+    case bool(Bool)
+
+    var stringValue: String {
+        switch self {
+        case .string(let s): s
+        case .number(let n):
+            n.truncatingRemainder(dividingBy: 1) == 0
+                ? String(Int(n))
+                : String(format: "%.1f", n)
+        case .bool(let b): b ? "true" : "false"
+        }
+    }
+
+    var doubleValue: Double? {
+        switch self {
+        case .number(let n): n
+        case .string(let s): Double(s)
+        case .bool: nil
+        }
+    }
+
+    var boolValue: Bool? {
+        switch self {
+        case .bool(let b): b
+        case .string(let s): s == "true"
+        case .number(let n): n != 0
+        }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let b = try? container.decode(Bool.self) {
+            self = .bool(b)
+        } else if let n = try? container.decode(Double.self) {
+            self = .number(n)
+        } else if let s = try? container.decode(String.self) {
+            self = .string(s)
+        } else {
+            self = .string("")
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .string(let s): try container.encode(s)
+        case .number(let n): try container.encode(n)
+        case .bool(let b): try container.encode(b)
+        }
+    }
+}
+
+// MARK: - Device Widget
 
 struct DeviceWidget: Identifiable, Codable, Hashable {
     let id: String
-    var name: String
-    var kind: WidgetKind
-    var category: WidgetCategory
-    var state: WidgetState
-    var roomId: String?
-    var icon: String?
+    let deviceId: String
+    var label: String
+    var dashboardId: String
+    var properties: [String: PropertyValue]
     var sortOrder: Int
-    var metadata: [String: String]
 
-    var displayIcon: String {
-        icon ?? category.systemImage
+    var widgetType: WidgetType {
+        WidgetType.infer(from: deviceId)
     }
 
-    var isToggleable: Bool {
-        switch category {
-        case .light, .lock, .garageDoor, .switch_, .fan, .blinds, .sprinkler:
-            true
-        default:
-            false
-        }
+    // MARK: - Convenience Accessors
+
+    /// Garage door state (closed/open/opening/closing)
+    var state: String? { properties["state"]?.stringValue }
+
+    /// Temperature in Celsius
+    var temperature: Double? { properties["temperature"]?.doubleValue }
+
+    /// Humidity percentage
+    var humidity: Double? { properties["humidity"]?.doubleValue }
+
+    /// Thermostat desired temperature
+    var desiredTemp: Double? { properties["desiredTemp"]?.doubleValue }
+
+    /// Thermostat room temperature
+    var roomTemp: Double? { properties["roomTemp"]?.doubleValue }
+
+    /// HVAC fan mode
+    var fanMode: String? { properties["fanMode"]?.stringValue }
+
+    /// Wind speed
+    var windSpeed: Double? { properties["windSpeed"]?.doubleValue }
+
+    /// Weather code (WMO)
+    var weatherCode: Int? {
+        if let n = properties["weatherCode"]?.doubleValue { return Int(n) }
+        return nil
     }
 
-    // Custom decoding with defaults for optional server fields
+    // Garage convenience
+    var isGarageClosed: Bool { state == "closed" }
+    var isGarageOpen: Bool { state == "open" }
+    var isGarageMoving: Bool { state == "opening" || state == "closing" }
+
+    // MARK: - Display Helpers
+
+    /// Formatted temperature string with degree symbol
+    func formatTemp(_ value: Double?) -> String {
+        guard let v = value else { return "--" }
+        return String(format: "%.1f°C", v)
+    }
+
+    /// Formatted humidity string
+    func formatHumidity(_ value: Double?) -> String {
+        guard let v = value else { return "--" }
+        return String(format: "%.0f%%", v)
+    }
+
+    // MARK: - Codable
+
     enum CodingKeys: String, CodingKey {
-        case id, name, label, kind, category, state, roomId, icon, sortOrder, order, metadata
+        case id, deviceId, label, name, dashboardId, properties, sortOrder, order
+    }
+
+    init(id: String, deviceId: String, label: String, dashboardId: String = "default", properties: [String: PropertyValue] = [:], sortOrder: Int = 0) {
+        self.id = id
+        self.deviceId = deviceId
+        self.label = label
+        self.dashboardId = dashboardId
+        self.properties = properties
+        self.sortOrder = sortOrder
     }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(String.self, forKey: .id)
-        let n = try c.decodeIfPresent(String.self, forKey: .name)
+        deviceId = try c.decodeIfPresent(String.self, forKey: .deviceId) ?? ""
         let l = try c.decodeIfPresent(String.self, forKey: .label)
-        name = n ?? l ?? "Widget"
-        kind = try c.decodeIfPresent(WidgetKind.self, forKey: .kind) ?? .physical
-        category = try c.decodeIfPresent(WidgetCategory.self, forKey: .category) ?? .custom
-        state = try c.decodeIfPresent(WidgetState.self, forKey: .state) ?? .unknown
-        roomId = try c.decodeIfPresent(String.self, forKey: .roomId)
-        icon = try c.decodeIfPresent(String.self, forKey: .icon)
+        let n = try c.decodeIfPresent(String.self, forKey: .name)
+        label = l ?? n ?? "Widget"
+        dashboardId = try c.decodeIfPresent(String.self, forKey: .dashboardId) ?? "default"
+        properties = try c.decodeIfPresent([String: PropertyValue].self, forKey: .properties) ?? [:]
         let so = try c.decodeIfPresent(Int.self, forKey: .sortOrder)
         let o = try c.decodeIfPresent(Int.self, forKey: .order)
         sortOrder = so ?? o ?? 0
-        metadata = try c.decodeIfPresent([String: String].self, forKey: .metadata) ?? [:]
     }
 
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(id, forKey: .id)
-        try c.encode(name, forKey: .name)
-        try c.encode(kind, forKey: .kind)
-        try c.encode(category, forKey: .category)
-        try c.encode(state, forKey: .state)
-        try c.encodeIfPresent(roomId, forKey: .roomId)
-        try c.encodeIfPresent(icon, forKey: .icon)
+        try c.encode(deviceId, forKey: .deviceId)
+        try c.encode(label, forKey: .label)
+        try c.encode(dashboardId, forKey: .dashboardId)
+        try c.encode(properties, forKey: .properties)
         try c.encode(sortOrder, forKey: .sortOrder)
-        try c.encode(metadata, forKey: .metadata)
     }
 }

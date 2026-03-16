@@ -11,26 +11,18 @@ final class RoomViewModel {
         self.appState = appState
     }
 
-    var widgetsByCategory: [(category: WidgetCategory, widgets: [DeviceWidget])] {
-        let grouped = Dictionary(grouping: area.widgets) { $0.category }
+    var widgetsByType: [(type: WidgetType, widgets: [DeviceWidget])] {
+        let grouped = Dictionary(grouping: area.widgets) { $0.widgetType }
         return grouped
-            .map { (category: $0.key, widgets: $0.value.sorted(by: { $0.sortOrder < $1.sortOrder })) }
-            .sorted(by: { $0.category.displayName < $1.category.displayName })
-    }
-
-    var physicalWidgets: [DeviceWidget] {
-        area.widgets.filter { $0.kind == .physical }.sorted(by: { $0.sortOrder < $1.sortOrder })
-    }
-
-    var virtualWidgets: [DeviceWidget] {
-        area.widgets.filter { $0.kind == .virtual }.sorted(by: { $0.sortOrder < $1.sortOrder })
+            .map { (type: $0.key, widgets: $0.value.sorted(by: { $0.sortOrder < $1.sortOrder })) }
+            .sorted(by: { $0.type.rawValue < $1.type.rawValue })
     }
 
     func toggleWidget(_ widget: DeviceWidget) async {
         await appState.toggleWidget(widget)
     }
 
-    func sendAction(_ widget: DeviceWidget, action: String, parameters: [String: String]? = nil) async {
-        await appState.sendWidgetAction(widget, action: action, parameters: parameters)
+    func sendCommand(_ widget: DeviceWidget, command: String) async {
+        await appState.sendWidgetCommand(widget, command: command)
     }
 }

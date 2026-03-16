@@ -1,7 +1,20 @@
 import SwiftUI
 
 enum AppTheme {
-    // MARK: - Colors
+    // MARK: - Dashboard Colors (dark theme matching web UI)
+
+    static let dashBackground = Color(red: 0.059, green: 0.067, blue: 0.090)   // #0f1117
+    static let dashCard = Color(red: 0.086, green: 0.106, blue: 0.133)         // #161b22
+    static let dashBorder = Color(red: 0.188, green: 0.212, blue: 0.239)       // #30363d
+    static let dashText = Color(red: 0.902, green: 0.929, blue: 0.953)         // #e6edf3
+    static let dashSecondary = Color(red: 0.545, green: 0.580, blue: 0.620)    // #8b949e
+    static let dashBlue = Color(red: 0.345, green: 0.651, blue: 1.0)           // #58a6ff
+    static let dashGreen = Color(red: 0.247, green: 0.725, blue: 0.314)        // #3fb950
+    static let dashYellow = Color(red: 0.847, green: 0.659, blue: 0.110)       // #d8a81c
+    static let dashOrange = Color(red: 0.878, green: 0.396, blue: 0.220)       // #e0653a
+    static let dashRed = Color(red: 0.973, green: 0.318, blue: 0.286)          // #f85149
+
+    // MARK: - System Colors
 
     static let accent = Color.accentColor
 
@@ -71,8 +84,25 @@ struct CardStyle: ViewModifier {
     }
 }
 
+struct DashCardStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .padding(12)
+            .background(AppTheme.dashCard)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(AppTheme.dashBorder, lineWidth: 1)
+            )
+    }
+}
+
 extension View {
     func cardStyle() -> some View {
         modifier(CardStyle())
+    }
+
+    func dashCardStyle() -> some View {
+        modifier(DashCardStyle())
     }
 }

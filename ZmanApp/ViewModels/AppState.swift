@@ -14,6 +14,9 @@ final class AppState {
     var isAuthenticated = false
     var showOnboarding = false
 
+    // Dashboard tab state
+    var selectedDashboard: String = "default"
+
     // Debug log
     var debugLog: [String] = []
 
@@ -44,20 +47,74 @@ final class AppState {
         PlatformService.isWideDevice
     }
 
+    // MARK: - Dashboard Widget Access
+
+    /// All widgets from the selected building, flattened from all areas
+    var allWidgets: [DeviceWidget] {
+        selectedBuilding?.areas.flatMap(\.widgets) ?? []
+    }
+
+    /// Unique dashboard IDs, with "default" first
+    var dashboardIds: [String] {
+        var seen = Set<String>()
+        var ids: [String] = []
+        for widget in allWidgets.sorted(by: { $0.sortOrder < $1.sortOrder }) {
+            if seen.insert(widget.dashboardId).inserted {
+                ids.append(widget.dashboardId)
+            }
+        }
+        // Ensure "default" is always first if present
+        if let idx = ids.firstIndex(of: "default"), idx > 0 {
+            ids.remove(at: idx)
+            ids.insert("default", at: 0)
+        }
+        return ids
+    }
+
+    /// Display name for a dashboard ID
+    func dashboardName(_ id: String) -> String {
+        switch id {
+        case "default": "Main"
+        case "weather": "Weather"
+        default: id.capitalized
+        }
+    }
+
+    /// Widgets for the currently selected dashboard, sorted by order
+    var currentDashboardWidgets: [DeviceWidget] {
+        allWidgets
+            .filter { $0.dashboardId == selectedDashboard }
+            .sorted(by: { $0.sortOrder < $1.sortOrder })
+    }
+
+    /// Garage door widgets on current dashboard
+    var garageWidgets: [DeviceWidget] {
+        currentDashboardWidgets.filter { $0.widgetType == .garage }
+    }
+
+    /// Temperature/humidity sensor widgets on current dashboard
+    var sensorWidgets: [DeviceWidget] {
+        currentDashboardWidgets.filter { $0.widgetType == .sensor }
+    }
+
+    /// Thermostat/HVAC widgets on current dashboard
+    var thermostatWidgets: [DeviceWidget] {
+        currentDashboardWidgets.filter { $0.widgetType == .thermostat }
+    }
+
+    /// Weather widgets on current dashboard
+    var weatherWidgets: [DeviceWidget] {
+        currentDashboardWidgets.filter { $0.widgetType == .weather }
+    }
+
+    // MARK: - Legacy area access (for iPad modes)
+
     var currentAreas: [Area] {
         selectedBuilding?.areas.sorted(by: { $0.sortOrder < $1.sortOrder }) ?? []
     }
 
     var garageAreas: [Area] {
         currentAreas.filter { $0.mode == .garage }
-    }
-
-    var roomAreas: [Area] {
-        currentAreas.filter { $0.mode == .room }
-    }
-
-    var generalAreas: [Area] {
-        currentAreas.filter { $0.mode == .general }
     }
 
     // MARK: - Lifecycle
@@ -135,11 +192,10 @@ final class AppState {
             guard let self else { return }
             var consecutiveErrors = 0
             let maxErrors = 5
-            let maxPollDuration: TimeInterval = 300 // 5 minutes
+            let maxPollDuration: TimeInterval = 300
             let startTime = Date()
 
             while !Task.isCancelled {
-                // Give up after 5 minutes of polling
                 if Date().timeIntervalSince(startTime) > maxPollDuration {
                     self.setError("Timed out waiting for email confirmation. Please try again.")
                     return
@@ -147,7 +203,7 @@ final class AppState {
 
                 do {
                     let response = try await self.cloud.poll(email: self.claimEmail)
-                    consecutiveErrors = 0 // reset on success
+                    consecutiveErrors = 0
                     if response.status == "ready", let claims = response.claims, !claims.isEmpty {
                         self.log("Poll: ready — \(claims.count) hub(s)")
                         for c in claims {
@@ -155,11 +211,9 @@ final class AppState {
                         }
                         self.pendingClaims = claims
                         self.claimPhase = .claiming
-                        // Auto-claim the first hub
                         await self.exchangeClaim(claims[0])
                         return
                     }
-                    // Still pending — wait before next poll
                     try await Task.sleep(for: .seconds(3))
                 } catch is CancellationError {
                     return
@@ -171,7 +225,6 @@ final class AppState {
                         }
                         return
                     }
-                    // Transient error — back off and retry
                     try? await Task.sleep(for: .seconds(Double(consecutiveErrors) * 2))
                 }
             }
@@ -197,14 +250,12 @@ final class AppState {
             let result = try await cloud.claim(hubURL: hubURL, claimToken: claim.claimToken)
             log("Claim: success — key=\(result.keyId) hub=\(result.hubId)")
 
-            // Store credentials
             persistence.apiKey = result.key
             persistence.hubId = result.hubId
             persistence.hubHostname = result.hostname
             persistence.serverURL = hubURL
             persistence.onboardingComplete = true
 
-            // Configure API service
             api.configure(baseURL: hubURL, apiKey: result.key)
 
             claimPhase = .complete
@@ -232,7 +283,6 @@ final class AppState {
         let previousSelectedId = selectedBuilding?.id
         buildings = freshBuildings
 
-        // Preserve selection
         if let prevId = previousSelectedId {
             selectedBuilding = freshBuildings.first(where: { $0.id == prevId })
         }
@@ -251,16 +301,24 @@ final class AppState {
         do {
             buildings = try await api.fetchBuildings()
             log("LoadBuildings: OK — \(buildings.count) building(s)")
-            // Restore last selected building
+            for b in buildings {
+                let widgetCount = b.areas.flatMap(\.widgets).count
+                log("  building '\(b.name)': \(b.areas.count) area(s), \(widgetCount) widget(s)")
+            }
+
             if let savedId = persistence.selectedBuildingId {
                 selectedBuilding = buildings.first(where: { $0.id == savedId })
             }
-            // Default to first building
             if selectedBuilding == nil {
                 selectedBuilding = buildings.first
             }
             if let building = selectedBuilding {
                 persistence.selectedBuildingId = building.id
+            }
+
+            // Default to first dashboard
+            if !dashboardIds.isEmpty && !dashboardIds.contains(selectedDashboard) {
+                selectedDashboard = dashboardIds.first ?? "default"
             }
         } catch {
             log("LoadBuildings: FAILED — \(error.localizedDescription)")
@@ -295,29 +353,24 @@ final class AppState {
     // MARK: - Widget Actions
 
     func toggleWidget(_ widget: DeviceWidget) async {
-        guard let building = selectedBuilding else { return }
+        log("Toggle: \(widget.deviceId) (widget: \(widget.id))")
         do {
-            let result = try await api.toggleWidget(id: widget.id)
-            if result.success {
-                await refreshCurrentBuilding()
-            } else {
-                setError(result.message ?? "Failed to toggle \(widget.name)")
-            }
+            try await api.sendDeviceCommand(deviceId: widget.deviceId, command: "toggle")
+            // Refresh to get updated state
+            await refreshCurrentBuilding()
         } catch {
+            log("Toggle FAILED: \(error.localizedDescription)")
             setError(error.localizedDescription)
-            _ = building // suppress unused warning
         }
     }
 
-    func sendWidgetAction(_ widget: DeviceWidget, action: String, parameters: [String: String]? = nil) async {
+    func sendWidgetCommand(_ widget: DeviceWidget, command: String) async {
+        log("Command: \(command) → \(widget.deviceId)")
         do {
-            let result = try await api.setWidgetState(id: widget.id, action: action, parameters: parameters)
-            if result.success {
-                await refreshCurrentBuilding()
-            } else {
-                setError(result.message ?? "Action failed for \(widget.name)")
-            }
+            try await api.sendDeviceCommand(deviceId: widget.deviceId, command: command)
+            await refreshCurrentBuilding()
         } catch {
+            log("Command FAILED: \(error.localizedDescription)")
             setError(error.localizedDescription)
         }
     }

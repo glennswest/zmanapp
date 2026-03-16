@@ -5,10 +5,11 @@ struct GarageDoorControl: View {
     var isOperating: Bool = false
     let onToggle: () -> Void
 
+    private var doorState: String { door.state ?? "unknown" }
+
     var body: some View {
         Button(action: onToggle) {
             HStack(spacing: 20) {
-                // Door visual
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(doorBackgroundColor)
@@ -17,16 +18,15 @@ struct GarageDoorControl: View {
                     Image(systemName: doorIcon)
                         .font(.system(size: 40, weight: .medium))
                         .foregroundStyle(doorIconColor)
-                        .symbolEffect(.pulse, isActive: isAnimating)
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(door.name)
+                    Text(door.label)
                         .font(.title3)
                         .fontWeight(.bold)
                         .foregroundStyle(.primary)
 
-                    StatusBadge(state: door.state)
+                    StatusBadge(state: doorState)
 
                     Text(actionLabel)
                         .font(.caption)
@@ -35,7 +35,6 @@ struct GarageDoorControl: View {
 
                 Spacer()
 
-                // Action chevron
                 Image(systemName: actionIcon)
                     .font(.title2)
                     .foregroundStyle(doorIconColor)
@@ -51,18 +50,17 @@ struct GarageDoorControl: View {
     }
 
     private var doorIcon: String {
-        switch door.state {
-        case .open, .opening: "door.garage.open"
-        case .closed, .closing: "door.garage.closed"
+        switch doorState {
+        case "open", "opening": "door.garage.open"
         default: "door.garage.closed"
         }
     }
 
     private var doorIconColor: Color {
-        switch door.state {
-        case .open: .orange
-        case .opening, .closing: .yellow
-        case .closed: .green
+        switch doorState {
+        case "open": .orange
+        case "opening", "closing": .yellow
+        case "closed": .green
         default: .gray
         }
     }
@@ -71,22 +69,18 @@ struct GarageDoorControl: View {
         doorIconColor.opacity(0.15)
     }
 
-    private var isAnimating: Bool {
-        door.state == .opening || door.state == .closing
-    }
-
     private var actionLabel: String {
-        switch door.state {
-        case .open, .opening: "Tap to close"
-        case .closed, .closing: "Tap to open"
+        switch doorState {
+        case "open", "opening": "Tap to close"
+        case "closed", "closing": "Tap to open"
         default: "Tap to toggle"
         }
     }
 
     private var actionIcon: String {
-        switch door.state {
-        case .open, .opening: "chevron.down"
-        case .closed, .closing: "chevron.up"
+        switch doorState {
+        case "open", "opening": "chevron.down"
+        case "closed", "closing": "chevron.up"
         default: "arrow.up.arrow.down"
         }
     }

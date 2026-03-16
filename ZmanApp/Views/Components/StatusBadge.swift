@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct StatusBadge: View {
-    let state: WidgetState
+    let state: String
     var compact: Bool = false
 
     var body: some View {
@@ -10,7 +10,7 @@ struct StatusBadge: View {
                 .fill(stateColor)
                 .frame(width: compact ? 6 : 8, height: compact ? 6 : 8)
             if !compact {
-                Text(stateText)
+                Text(state.uppercased())
                     .font(.caption2)
                     .fontWeight(.medium)
                     .foregroundStyle(stateColor)
@@ -24,31 +24,14 @@ struct StatusBadge: View {
 
     private var stateColor: Color {
         switch state {
-        case .on, .open, .unlocked:
+        case "on", "open", "unlocked":
             AppTheme.onlineGreen
-        case .off, .closed, .locked:
+        case "off", "closed", "locked":
             AppTheme.offGray
-        case .opening, .closing:
+        case "opening", "closing":
             AppTheme.warningYellow
-        case .value:
-            AppTheme.accent
-        case .unknown:
+        default:
             AppTheme.offGray
-        }
-    }
-
-    private var stateText: String {
-        switch state {
-        case .on: "ON"
-        case .off: "OFF"
-        case .open: "OPEN"
-        case .closed: "CLOSED"
-        case .opening: "OPENING"
-        case .closing: "CLOSING"
-        case .locked: "LOCKED"
-        case .unlocked: "UNLOCKED"
-        case .value(let v): String(format: "%.0f", v)
-        case .unknown: "—"
         }
     }
 }
