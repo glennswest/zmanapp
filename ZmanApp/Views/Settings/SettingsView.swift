@@ -2,17 +2,26 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(AppState.self) private var appState
-    @State private var serverURL: String = ""
     @State private var showLogoutConfirm = false
 
     var body: some View {
         Form {
-            Section("Server") {
-                HStack {
-                    Image(systemName: "globe")
-                        .foregroundStyle(.secondary)
-                    Text(appState.persistence.serverURL.isEmpty ? "Not configured" : appState.persistence.serverURL)
-                        .foregroundStyle(appState.persistence.serverURL.isEmpty ? .secondary : .primary)
+            Section("Hub") {
+                if !appState.persistence.hubHostname.isEmpty {
+                    HStack {
+                        Image(systemName: "globe")
+                            .foregroundStyle(.secondary)
+                        Text(appState.persistence.hubHostname)
+                    }
+                }
+
+                if !appState.persistence.hubId.isEmpty {
+                    HStack {
+                        Image(systemName: "tag")
+                            .foregroundStyle(.secondary)
+                        Text("Hub ID: \(appState.persistence.hubId)")
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 HStack {
@@ -21,8 +30,13 @@ struct SettingsView: View {
                     Text(appState.api.isConnected ? "Connected" : "Disconnected")
                 }
 
-                Button("Change Server") {
-                    serverURL = appState.persistence.serverURL
+                if !appState.persistence.claimEmail.isEmpty {
+                    HStack {
+                        Image(systemName: "envelope")
+                            .foregroundStyle(.secondary)
+                        Text(appState.persistence.claimEmail)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
 
@@ -147,7 +161,7 @@ struct SettingsView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Are you sure you want to sign out?")
+            Text("Are you sure you want to sign out? You'll need to re-authenticate with your email.")
         }
     }
 

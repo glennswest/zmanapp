@@ -2,26 +2,32 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Environment(AppState.self) private var appState
-    @State private var serverURL = ""
-    @State private var currentPage = 0
+    @State private var email = ""
 
     var body: some View {
-        VStack(spacing: 0) {
-            TabView(selection: $currentPage) {
-                welcomePage.tag(0)
-                serverPage.tag(1)
+        Group {
+            switch appState.claimPhase {
+            case .idle, .enterEmail:
+                emailEntryView
+            case .polling:
+                pollingView
+            case .claiming:
+                claimingView
+            case .complete:
+                completeView
             }
-            #if os(iOS)
-            .tabViewStyle(.page(indexDisplayMode: .always))
-            .indexViewStyle(.page(backgroundDisplayMode: .always))
-            #endif
         }
         .background(AppTheme.background)
+        .onAppear {
+            if appState.claimPhase == .idle {
+                appState.claimPhase = .enterEmail
+            }
+        }
     }
 
-    // MARK: - Welcome Page
+    // MARK: - Email Entry
 
-    private var welcomePage: some View {
+    private var emailEntryView: some View {
         VStack(spacing: 32) {
             Spacer()
 
@@ -34,7 +40,7 @@ struct OnboardingView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
-                Text("Control your home from anywhere.\nManage multiple buildings, rooms, and devices.")
+                Text("Enter the email address associated\nwith your Zman hub to get started.")
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -42,83 +48,149 @@ struct OnboardingView: View {
             }
 
             VStack(spacing: 16) {
-                Feature(icon: "building.2.fill", title: "Multiple Buildings", description: "Manage all your properties")
-                Feature(icon: "square.grid.2x2.fill", title: "Room Control", description: "Dedicated controls per room")
-                Feature(icon: "ipad.landscape", title: "iPad Kiosk Mode", description: "Mount iPads as room panels")
-                Feature(icon: "lock.shield.fill", title: "Secure Tunnel", description: "Connect via Cloudflare tunnel")
+                Feature(icon: "envelope.fill", title: "Magic Link", description: "We'll email you a secure link")
+                Feature(icon: "lock.shield.fill", title: "No Password", description: "Connect securely with one tap")
+                Feature(icon: "building.2.fill", title: "Multiple Hubs", description: "Manage all your properties")
             }
             .padding(.horizontal, 40)
-
-            Spacer()
-
-            Button {
-                withAnimation { currentPage = 1 }
-            } label: {
-                Text("Get Started")
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(AppTheme.accent)
-                    .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-            .padding(.horizontal, 40)
-            .padding(.bottom, 40)
-        }
-    }
-
-    // MARK: - Server Page
-
-    private var serverPage: some View {
-        VStack(spacing: 32) {
-            Spacer()
-
-            Image(systemName: "server.rack")
-                .font(.system(size: 60))
-                .foregroundStyle(AppTheme.accent)
-
-            VStack(spacing: 12) {
-                Text("Connect to Zman")
-                    .font(.title)
-                    .fontWeight(.bold)
-
-                Text("Enter your Zman server URL.\nThis is typically your Cloudflare tunnel address.")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-            }
 
             VStack(spacing: 16) {
-                TextField("https://home.example.com", text: $serverURL)
+                TextField("email@example.com", text: $email)
                     #if os(iOS)
-                    .keyboardType(.URL)
+                    .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
                     #endif
                     .autocorrectionDisabled()
-                    .textContentType(.URL)
+                    .textContentType(.emailAddress)
                     .padding()
                     .background(AppTheme.secondaryBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
 
                 Button {
-                    appState.configureServer(url: serverURL)
+                    Task { await appState.startClaimFlow(email: email) }
                 } label: {
-                    Text("Connect")
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(serverURL.isEmpty ? AppTheme.offGray : AppTheme.accent)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    Group {
+                        if appState.isLoading {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Text("Send Link")
+                                .fontWeight(.semibold)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(isValidEmail ? AppTheme.accent : AppTheme.offGray)
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .disabled(serverURL.isEmpty)
+                .disabled(!isValidEmail || appState.isLoading)
             }
             .padding(.horizontal, 40)
 
             Spacer()
             Spacer()
         }
+    }
+
+    // MARK: - Polling (Check Your Email)
+
+    private var pollingView: some View {
+        VStack(spacing: 32) {
+            Spacer()
+
+            Image(systemName: "envelope.open.fill")
+                .font(.system(size: 80))
+                .foregroundStyle(AppTheme.accent)
+
+            VStack(spacing: 12) {
+                Text("Check Your Email")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+
+                Text("We sent a link to\n**\(appState.claimEmail)**\n\nTap the link in the email to connect your app.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+
+            ProgressView()
+                .scaleEffect(1.5)
+                .padding()
+
+            Text("Waiting for confirmation...")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Spacer()
+
+            Button {
+                appState.cancelClaim()
+            } label: {
+                Text("Cancel")
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.bottom, 40)
+        }
+    }
+
+    // MARK: - Claiming
+
+    private var claimingView: some View {
+        VStack(spacing: 32) {
+            Spacer()
+
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .font(.system(size: 80))
+                .foregroundStyle(AppTheme.accent)
+                .symbolEffect(.rotate)
+
+            VStack(spacing: 12) {
+                Text("Connecting...")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+
+                Text("Setting up your connection to the hub.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+            }
+
+            ProgressView()
+                .scaleEffect(1.5)
+
+            Spacer()
+        }
+    }
+
+    // MARK: - Complete
+
+    private var completeView: some View {
+        VStack(spacing: 32) {
+            Spacer()
+
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 80))
+                .foregroundStyle(.green)
+
+            VStack(spacing: 12) {
+                Text("Connected!")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+
+                Text("Your app is connected to your Zman hub.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+        }
+    }
+
+    // MARK: - Helpers
+
+    private var isValidEmail: Bool {
+        email.contains("@") && email.contains(".") && email.count >= 5
     }
 }
 

@@ -16,6 +16,10 @@ final class PersistenceService: ObservableObject, Sendable {
         static let serverURL = "serverURL"
         static let accessToken = "accessToken"
         static let refreshToken = "refreshToken"
+        static let apiKey = "apiKey"
+        static let hubId = "hubId"
+        static let hubHostname = "hubHostname"
+        static let claimEmail = "claimEmail"
         static let ipadMode = "ipadMode"
         static let ipadAssignedAreaId = "ipadAssignedAreaId"
         static let onboardingComplete = "onboardingComplete"
@@ -36,6 +40,26 @@ final class PersistenceService: ObservableObject, Sendable {
     var refreshToken: String {
         get { keychain(get: Keys.refreshToken) ?? "" }
         set { keychain(set: newValue, forKey: Keys.refreshToken) }
+    }
+
+    var apiKey: String {
+        get { keychain(get: Keys.apiKey) ?? "" }
+        set { keychain(set: newValue, forKey: Keys.apiKey) }
+    }
+
+    var hubId: String {
+        get { defaults.string(forKey: Keys.hubId) ?? "" }
+        set { defaults.set(newValue, forKey: Keys.hubId) }
+    }
+
+    var hubHostname: String {
+        get { defaults.string(forKey: Keys.hubHostname) ?? "" }
+        set { defaults.set(newValue, forKey: Keys.hubHostname) }
+    }
+
+    var claimEmail: String {
+        get { defaults.string(forKey: Keys.claimEmail) ?? "" }
+        set { defaults.set(newValue, forKey: Keys.claimEmail) }
     }
 
     var onboardingComplete: Bool {
@@ -132,6 +156,10 @@ final class PersistenceService: ObservableObject, Sendable {
         serverURL = ""
         accessToken = ""
         refreshToken = ""
+        apiKey = ""
+        hubId = ""
+        hubHostname = ""
+        claimEmail = ""
         selectedBuildingId = nil
         selectedAreaId = nil
         displayMode = .general

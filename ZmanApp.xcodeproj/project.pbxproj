@@ -11,7 +11,6 @@
 		20B55D2CC6E2FE50BAF8C0AB /* Residence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E06723018FFE44F784C2F9E /* Residence.swift */; };
 		260A4F62D51CAB5473D27BBC /* GarageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB2B29BEBA4C8D0C2B08DAD /* GarageViewModel.swift */; };
 		3299827561255748F1201689 /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C1BB6EE09E49896DA591EC /* RoomView.swift */; };
-		3DDCB708E21794C52FEDC4B2 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD8F1FC7F8683ACEE04626E /* LoginView.swift */; };
 		40A5714B055AFEB69BABBA46 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607F71E6405BFA0738878200 /* APIService.swift */; };
 		4502DBB74A3728B3336CCED4 /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C6FAACC61C8443CA49C8533 /* SectionHeader.swift */; };
 		467A6E27D951B2FA4FF1A439 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A44EF9B7B1953FA19FBAB921 /* Assets.xcassets */; };
@@ -20,11 +19,11 @@
 		56AD6227B6C7E03EADCF66A2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D3B76980B99A03AFA21BC8 /* ContentView.swift */; };
 		5A2FB3684060AF362AD67131 /* PlatformService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A03D8276AA287C55BBC4A913 /* PlatformService.swift */; };
 		5C42D750014B1CF75C5BEBB0 /* QuickActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25588149DA33727920D7382 /* QuickActionButton.swift */; };
-		671070867CF0447C98AFCF36 /* TunnelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61F96D36E6F61A61807F28B /* TunnelConfig.swift */; };
 		69E293D57F404927F2674E3C /* ZmanWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BA2B3327D41B10E4303876 /* ZmanWidgets.swift */; };
 		6A067E003083DCEBEE62B5FA /* ZmanAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B16F4EFF179BB2A304C1A1D /* ZmanAppApp.swift */; };
 		6D01382F5D594033603451F3 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2D1C24D3A46360EF2EC824 /* PersistenceService.swift */; };
 		6EA5AFC885BD54BBBA6F4DEE /* APIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB8D8A5A498585AD59B1F61 /* APIModels.swift */; };
+		728EC03FD8B60BD16D53CC57 /* CloudService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2FCE3F4AE480F757BB4329 /* CloudService.swift */; };
 		95DD80F1CD37CED857B5BB94 /* DeviceWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971612C7CEC12CA33F46D10E /* DeviceWidget.swift */; };
 		9F465A8D888FD1A8A8CD08B7 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4E5A2E95C364574F3A1630 /* AppState.swift */; };
 		B6B82090880ED2CC25F49C74 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB1A4022AA1DC4262A173EB /* Room.swift */; };
@@ -45,6 +44,7 @@
 		0EEED35BF86AE931FEA824B8 /* GarageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageView.swift; sourceTree = "<group>"; };
 		1C6FAACC61C8443CA49C8533 /* SectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeader.swift; sourceTree = "<group>"; };
 		1F5B69B06153580884D5C2B3 /* RoomViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomViewModel.swift; sourceTree = "<group>"; };
+		2D2FCE3F4AE480F757BB4329 /* CloudService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudService.swift; sourceTree = "<group>"; };
 		3B16F4EFF179BB2A304C1A1D /* ZmanAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZmanAppApp.swift; sourceTree = "<group>"; };
 		3E06723018FFE44F784C2F9E /* Residence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Residence.swift; sourceTree = "<group>"; };
 		589A6991586B81D917F4EA70 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -65,8 +65,6 @@
 		A25588149DA33727920D7382 /* QuickActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionButton.swift; sourceTree = "<group>"; };
 		A2FB4E1E2BB2D27ED97AB56F /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		A44EF9B7B1953FA19FBAB921 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		ACD8F1FC7F8683ACEE04626E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		B61F96D36E6F61A61807F28B /* TunnelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelConfig.swift; sourceTree = "<group>"; };
 		BB1397A1EFC706FA4B58A395 /* SyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncService.swift; sourceTree = "<group>"; };
 		CE4E5A2E95C364574F3A1630 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		D9C1BB6EE09E49896DA591EC /* RoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
@@ -153,7 +151,6 @@
 		84A981F9AE213EC703CA6B29 /* Residence */ = {
 			isa = PBXGroup;
 			children = (
-				ACD8F1FC7F8683ACEE04626E /* LoginView.swift */,
 				6194A063B565275AACD1E1F5 /* OnboardingView.swift */,
 			);
 			path = Residence;
@@ -163,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				607F71E6405BFA0738878200 /* APIService.swift */,
+				2D2FCE3F4AE480F757BB4329 /* CloudService.swift */,
 				5F2D1C24D3A46360EF2EC824 /* PersistenceService.swift */,
 				A03D8276AA287C55BBC4A913 /* PlatformService.swift */,
 				BB1397A1EFC706FA4B58A395 /* SyncService.swift */,
@@ -194,7 +192,6 @@
 				971612C7CEC12CA33F46D10E /* DeviceWidget.swift */,
 				3E06723018FFE44F784C2F9E /* Residence.swift */,
 				0BB1A4022AA1DC4262A173EB /* Room.swift */,
-				B61F96D36E6F61A61807F28B /* TunnelConfig.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -351,12 +348,12 @@
 				40A5714B055AFEB69BABBA46 /* APIService.swift in Sources */,
 				9F465A8D888FD1A8A8CD08B7 /* AppState.swift in Sources */,
 				FC2144AD1BB28F87E2029AB3 /* AppTheme.swift in Sources */,
+				728EC03FD8B60BD16D53CC57 /* CloudService.swift in Sources */,
 				56AD6227B6C7E03EADCF66A2 /* ContentView.swift in Sources */,
 				95DD80F1CD37CED857B5BB94 /* DeviceWidget.swift in Sources */,
 				C095CB8DB983DDBB164AC8F1 /* GarageDoorControl.swift in Sources */,
 				CC334C043D25446AAE81E63E /* GarageView.swift in Sources */,
 				260A4F62D51CAB5473D27BBC /* GarageViewModel.swift in Sources */,
-				3DDCB708E21794C52FEDC4B2 /* LoginView.swift in Sources */,
 				4D25152111D74394ACA8BA87 /* OnboardingView.swift in Sources */,
 				5644250C6E9EFC7548364A38 /* PadDashboardView.swift in Sources */,
 				6D01382F5D594033603451F3 /* PersistenceService.swift in Sources */,
@@ -371,7 +368,6 @@
 				F266D5BBDBF71B2B3C96A1C1 /* SettingsView.swift in Sources */,
 				D549B04B7600532C16407860 /* StatusBadge.swift in Sources */,
 				04652ACD87FFE54526A9BDD6 /* SyncService.swift in Sources */,
-				671070867CF0447C98AFCF36 /* TunnelConfig.swift in Sources */,
 				C787652270ACB93BF42A6E56 /* WidgetCard.swift in Sources */,
 				6A067E003083DCEBEE62B5FA /* ZmanAppApp.swift in Sources */,
 			);

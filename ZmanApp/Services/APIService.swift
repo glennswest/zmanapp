@@ -32,6 +32,7 @@ final class APIService: ObservableObject, Sendable {
     @Published var isConnected = false
 
     private var baseURL: String = ""
+    private var apiKey: String = ""
     private var accessToken: String = ""
     private var refreshToken: String = ""
     private let session: URLSession
@@ -58,11 +59,12 @@ final class APIService: ObservableObject, Sendable {
 
     // MARK: - Configuration
 
-    func configure(baseURL: String, accessToken: String = "", refreshToken: String = "") {
+    func configure(baseURL: String, apiKey: String = "", accessToken: String = "", refreshToken: String = "") {
         self.baseURL = baseURL.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        self.apiKey = apiKey
         self.accessToken = accessToken
         self.refreshToken = refreshToken
-        self.isAuthenticated = !accessToken.isEmpty
+        self.isAuthenticated = !apiKey.isEmpty || !accessToken.isEmpty
     }
 
     // MARK: - Auth
@@ -77,6 +79,7 @@ final class APIService: ObservableObject, Sendable {
     }
 
     func logout() {
+        apiKey = ""
         accessToken = ""
         refreshToken = ""
         isAuthenticated = false
@@ -161,7 +164,9 @@ final class APIService: ObservableObject, Sendable {
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        if !accessToken.isEmpty {
+        if !apiKey.isEmpty {
+            request.setValue(apiKey, forHTTPHeaderField: "X-API-Key")
+        } else if !accessToken.isEmpty {
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         }
 

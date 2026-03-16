@@ -7,8 +7,6 @@ struct ContentView: View {
         Group {
             if appState.showOnboarding {
                 OnboardingView()
-            } else if appState.showLogin {
-                LoginView()
             } else if appState.isWideLayout {
                 PadDashboardView()
             } else {

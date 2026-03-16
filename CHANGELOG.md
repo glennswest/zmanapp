@@ -24,6 +24,18 @@
 
 ## [Unreleased]
 
+### 2026-03-16
+- **feat:** Implement cloud claim authentication flow (email magic link → claim token → API key)
+- **feat:** Add CloudService for cloud.zmanapp.com worker endpoints (connect, poll, claim)
+- **feat:** Add X-API-Key header auth support to APIService
+- **feat:** Rewrite OnboardingView with email entry, polling, and claim exchange screens
+- **refactor:** Replace username/password login with email magic-link claim flow
+- **refactor:** Remove LoginView (superseded by claim flow in OnboardingView)
+- **refactor:** Remove TunnelConfig model (replaced by hub persistence fields)
+- **feat:** Add hub info display in SettingsView (hostname, hub ID, email)
+- **feat:** Add apiKey, hubId, hubHostname, claimEmail to PersistenceService (Keychain/UserDefaults)
+- **docs:** Update README with cloud worker API endpoints and new auth flow
+
 ### 2026-03-11
 - **chore:** Switch to automatic code signing with development team for device builds
 - **feat:** Add app icon — bold Z with lightning bolt on dark navy background

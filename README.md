@@ -15,8 +15,9 @@ Home and building control app for iPhone, iPad, and Mac.
 - **Mac** — Native macOS app with NavigationSplitView layout, Settings in app menu, Cmd+R refresh
 - **Widget Organization** — Physical and virtual widgets with category grouping and filtering
 - **WidgetKit** — Home screen widgets for quick device status and one-tap control (iOS only)
+- **Cloud Claim Auth** — Email magic-link authentication via cloud worker
 - **Cloudflare Tunnel** — Secure remote access through Cloudflare tunnel
-- **Keychain Auth** — Tokens stored securely in Keychain
+- **Keychain Auth** — API keys stored securely in Keychain
 
 ## Requirements
 
@@ -56,10 +57,10 @@ ZmanApp/
 │   ├── Dashboard/   — PhoneDashboardView, PadDashboardView
 │   ├── Garage/      — GarageView, GarageDoorControl
 │   ├── Room/        — RoomView with category grid
-│   ├── Residence/   — LoginView, OnboardingView
+│   ├── Residence/   — OnboardingView (email claim flow)
 │   ├── Settings/    — SettingsView (server, display mode, sync status, building picker)
 │   └── Components/  — StatusBadge, QuickActionButton, WidgetCard, etc.
-├── Services/        — APIService, PersistenceService, PlatformService, SyncService
+├── Services/        — APIService, CloudService, PersistenceService, PlatformService, SyncService
 └── Theme/           — AppTheme (colors, spacing, grid layouts)
 
 ZmanWidgets/         — WidgetKit extension (QuickAction + Status widgets, iOS only)
@@ -67,12 +68,21 @@ ZmanWidgets/         — WidgetKit extension (QuickAction + Status widgets, iOS 
 
 ## Backend API
 
-The app expects a Zman backend API accessible via Cloudflare tunnel:
+### Cloud Worker (cloud.zmanapp.com)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/app/connect` | POST | Send magic link email |
+| `/api/app/poll` | POST | Poll for claim token |
+| `/api/app/confirm` | GET | User clicks magic link (browser) |
+| `/api/app/validate` | POST | Hub validates claim (machine-to-machine) |
+
+### Hub API (via Cloudflare tunnel)
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/api/v1/health` | GET | Health check |
-| `/api/v1/auth/login` | POST | Authenticate |
+| `/api/v1/auth/claim` | POST | Exchange claim token for API key |
 | `/api/v1/buildings` | GET | List all buildings |
 | `/api/v1/buildings/:id` | GET | Get building with areas |
 | `/api/v1/buildings/:id/areas` | GET | List areas in building |

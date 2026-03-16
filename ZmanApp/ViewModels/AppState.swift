@@ -12,10 +12,22 @@ final class AppState {
     var errorMessage: String?
     var showError = false
     var isAuthenticated = false
-    var showLogin = false
     var showOnboarding = false
 
+    // Claim flow state
+    enum ClaimPhase {
+        case idle
+        case enterEmail
+        case polling
+        case claiming
+        case complete
+    }
+    var claimPhase: ClaimPhase = .idle
+    var claimEmail: String = ""
+    var pendingClaims: [HubClaim] = []
+
     let api = APIService.shared
+    let cloud = CloudService.shared
     let persistence = PersistenceService.shared
     let syncService = SyncService()
 
@@ -42,32 +54,127 @@ final class AppState {
     // MARK: - Lifecycle
 
     func initialize() async {
+        // Check for existing API key auth
+        let apiKey = persistence.apiKey
+        let hubHostname = persistence.hubHostname
+        if !apiKey.isEmpty && !hubHostname.isEmpty {
+            let serverURL = "https://\(hubHostname)"
+            api.configure(baseURL: serverURL, apiKey: apiKey)
+
+            let connected = await api.checkConnection()
+            if connected {
+                isAuthenticated = true
+                await loadBuildings()
+                startSyncService()
+                return
+            }
+        }
+
+        // Legacy: check for bearer token auth
         let serverURL = persistence.serverURL
-        guard !serverURL.isEmpty else {
-            showOnboarding = true
-            return
+        if !serverURL.isEmpty && !persistence.accessToken.isEmpty {
+            api.configure(
+                baseURL: serverURL,
+                accessToken: persistence.accessToken,
+                refreshToken: persistence.refreshToken
+            )
+            let connected = await api.checkConnection()
+            if connected {
+                isAuthenticated = true
+                await loadBuildings()
+                startSyncService()
+                return
+            }
         }
 
-        api.configure(
-            baseURL: serverURL,
-            accessToken: persistence.accessToken,
-            refreshToken: persistence.refreshToken
-        )
+        // No valid auth — show onboarding
+        showOnboarding = true
+    }
 
-        let connected = await api.checkConnection()
-        if !connected {
-            setError("Cannot connect to Zman server.")
-            return
+    // MARK: - Claim Flow
+
+    func startClaimFlow(email: String) async {
+        claimEmail = email
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            _ = try await cloud.connect(email: email)
+            claimPhase = .polling
+            persistence.claimEmail = email
+            await pollForClaim()
+        } catch {
+            setError(error.localizedDescription)
         }
+    }
 
-        if persistence.accessToken.isEmpty {
-            showLogin = true
-            return
+    private var pollTask: Task<Void, Never>?
+
+    func pollForClaim() async {
+        pollTask?.cancel()
+        claimPhase = .polling
+
+        pollTask = Task { [weak self] in
+            guard let self else { return }
+            while !Task.isCancelled {
+                do {
+                    let response = try await self.cloud.poll(email: self.claimEmail)
+                    if response.status == "ready", let claims = response.claims, !claims.isEmpty {
+                        self.pendingClaims = claims
+                        self.claimPhase = .claiming
+                        // Auto-claim the first hub
+                        await self.exchangeClaim(claims[0])
+                        return
+                    }
+                    // Still pending — wait before next poll
+                    try await Task.sleep(for: .seconds(3))
+                } catch {
+                    if !Task.isCancelled {
+                        self.setError(error.localizedDescription)
+                    }
+                    return
+                }
+            }
         }
+        await pollTask?.value
+    }
 
-        isAuthenticated = true
-        await loadBuildings()
-        startSyncService()
+    func cancelClaim() {
+        pollTask?.cancel()
+        pollTask = nil
+        claimPhase = .enterEmail
+    }
+
+    func exchangeClaim(_ claim: HubClaim) async {
+        claimPhase = .claiming
+        isLoading = true
+        defer { isLoading = false }
+
+        let hubURL = "https://\(claim.hostname)"
+
+        do {
+            let result = try await cloud.claim(hubURL: hubURL, claimToken: claim.claimToken)
+
+            // Store credentials
+            persistence.apiKey = result.key
+            persistence.hubId = result.hubId
+            persistence.hubHostname = result.hostname
+            persistence.serverURL = hubURL
+            persistence.onboardingComplete = true
+
+            // Configure API service
+            api.configure(baseURL: hubURL, apiKey: result.key)
+
+            claimPhase = .complete
+            isAuthenticated = true
+            showOnboarding = false
+
+            await loadBuildings()
+            startSyncService()
+        } catch {
+            setError("Failed to connect to hub: \(error.localizedDescription)")
+            claimPhase = .enterEmail
+        }
     }
 
     // MARK: - Sync
@@ -171,41 +278,18 @@ final class AppState {
 
     // MARK: - Auth
 
-    func login(username: String, password: String) async {
-        isLoading = true
-        defer { isLoading = false }
-
-        do {
-            let token = try await api.login(username: username, password: password)
-            persistence.accessToken = token.accessToken
-            persistence.refreshToken = token.refreshToken
-            isAuthenticated = true
-            showLogin = false
-            await loadBuildings()
-            startSyncService()
-        } catch {
-            setError(error.localizedDescription)
-        }
-    }
-
     func logout() {
         syncService.stopSync()
         api.logout()
-        persistence.accessToken = ""
-        persistence.refreshToken = ""
+        persistence.resetAll()
         isAuthenticated = false
         buildings = []
         selectedBuilding = nil
         selectedArea = nil
-        showLogin = true
-    }
-
-    func configureServer(url: String) {
-        persistence.serverURL = url
-        api.configure(baseURL: url)
-        persistence.onboardingComplete = true
-        showOnboarding = false
-        showLogin = true
+        claimPhase = .enterEmail
+        claimEmail = ""
+        pendingClaims = []
+        showOnboarding = true
     }
 
     // MARK: - Error Handling

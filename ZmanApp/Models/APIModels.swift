@@ -15,7 +15,7 @@ struct PaginatedResponse<T: Codable>: Codable {
     let pageSize: Int
 }
 
-// MARK: - Auth
+// MARK: - Auth (Legacy)
 
 struct LoginRequest: Codable {
     let username: String
@@ -26,6 +26,44 @@ struct AuthToken: Codable {
     let accessToken: String
     let refreshToken: String
     let expiresIn: Int
+}
+
+// MARK: - Cloud Claim Flow
+
+struct AppConnectRequest: Codable {
+    let email: String
+}
+
+struct AppConnectResponse: Codable {
+    let status: String
+}
+
+struct AppPollRequest: Codable {
+    let email: String
+}
+
+struct HubClaim: Codable, Identifiable {
+    let hostname: String
+    let hubId: String
+    let claimToken: String
+
+    var id: String { hubId }
+}
+
+struct AppPollResponse: Codable {
+    let status: String
+    let claims: [HubClaim]?
+}
+
+struct ClaimRequest: Codable {
+    let claimToken: String
+}
+
+struct ClaimResponse: Codable {
+    let key: String
+    let keyId: String
+    let hubId: String
+    let hostname: String
 }
 
 // MARK: - Widget Commands
