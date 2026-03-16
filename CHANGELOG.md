@@ -3,6 +3,14 @@
 ## [Unreleased]
 
 ### 2026-03-16
+- **feat:** Split thermostat into 3 separate grid tiles — setpoint (mode-colored), room temp/humidity, fan mode
+- **feat:** Weather routing via hub `property` field (today/tomorrow/null) instead of ID matching
+- **feat:** WeatherCurrentWidget shows condition text, wind direction compass arrow, wind speed
+- **feat:** Add `widgetTypeRaw` and `widgetProperty` fields to DeviceWidget for hub type/property decoding
+- **feat:** Add `tempUnit` field to Building model from hub API
+- **feat:** Add thermostatMode, thermostatState, condition, windDirection property accessors
+- **fix:** PadDashboardView now uses DashboardCell expansion (was referencing missing DashboardWidgetView)
+- **fix:** Fix unreachable default case in widget type switch
 - **feat:** Rewrite dashboard UI to match web UI — dark theme, dashboard tabs (Main/Weather), garage door panel icons, sensor/thermostat/weather widget cards
 - **feat:** Add PropertyValue type for flexible JSON property parsing (string/number/bool)
 - **feat:** Add WidgetType inference from device_id prefix (garage, thermostat, sensor, weather)
