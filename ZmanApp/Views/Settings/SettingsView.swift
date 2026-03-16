@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(AppState.self) private var appState
     @State private var showLogoutConfirm = false
+    @State private var showLog = false
 
     var body: some View {
         Form {
@@ -145,6 +146,18 @@ struct SettingsView: View {
                 }
             }
 
+            Section("Debug") {
+                Button { showLog = true } label: {
+                    HStack {
+                        Image(systemName: "doc.text.magnifyingglass")
+                        Text("View Log")
+                        Spacer()
+                        Text("\(appState.debugLog.count)")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
             Section("About") {
                 HStack {
                     Text("Version")
@@ -155,6 +168,40 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
+        .sheet(isPresented: $showLog) {
+            NavigationStack {
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 4) {
+                            if appState.debugLog.isEmpty {
+                                Text("No log entries yet.")
+                                    .foregroundStyle(.secondary)
+                                    .padding()
+                            }
+                            ForEach(Array(appState.debugLog.enumerated()), id: \.offset) { i, entry in
+                                Text(entry)
+                                    .font(.system(.caption, design: .monospaced))
+                                    .textSelection(.enabled)
+                                    .id(i)
+                            }
+                        }
+                        .padding()
+                    }
+                    .onAppear {
+                        if let last = appState.debugLog.indices.last {
+                            proxy.scrollTo(last, anchor: .bottom)
+                        }
+                    }
+                }
+                .navigationTitle("Debug Log")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { showLog = false }
+                    }
+                }
+            }
+        }
         .alert("Sign Out", isPresented: $showLogoutConfirm) {
             Button("Sign Out", role: .destructive) {
                 appState.logout()
