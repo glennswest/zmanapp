@@ -144,7 +144,6 @@ struct OnboardingView: View {
             Image(systemName: "arrow.triangle.2.circlepath")
                 .font(.system(size: 80))
                 .foregroundStyle(AppTheme.accent)
-                .symbolEffect(.rotate)
 
             VStack(spacing: 12) {
                 Text("Connecting...")
