@@ -14,6 +14,15 @@ final class AppState {
     var isAuthenticated = false
     var showOnboarding = false
 
+    // Debug log
+    var debugLog: [String] = []
+
+    func log(_ message: String) {
+        let ts = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .medium)
+        debugLog.append("[\(ts)] \(message)")
+        if debugLog.count > 50 { debugLog.removeFirst() }
+    }
+
     // Claim flow state
     enum ClaimPhase {
         case idle
@@ -98,12 +107,15 @@ final class AppState {
         isLoading = true
         defer { isLoading = false }
 
+        log("Connect: sending magic link to \(email)")
         do {
             _ = try await cloud.connect(email: email)
+            log("Connect: success, starting poll")
             claimPhase = .polling
             persistence.claimEmail = email
             await pollForClaim()
         } catch {
+            log("Connect: FAILED — \(error.localizedDescription)")
             setError(error.localizedDescription)
         }
     }
@@ -132,6 +144,10 @@ final class AppState {
                     let response = try await self.cloud.poll(email: self.claimEmail)
                     consecutiveErrors = 0 // reset on success
                     if response.status == "ready", let claims = response.claims, !claims.isEmpty {
+                        self.log("Poll: ready — \(claims.count) hub(s)")
+                        for c in claims {
+                            self.log("  hub: \(c.hostname) id: \(c.hubId) token: \(c.claimToken.prefix(12))...")
+                        }
                         self.pendingClaims = claims
                         self.claimPhase = .claiming
                         // Auto-claim the first hub
@@ -170,9 +186,11 @@ final class AppState {
         defer { isLoading = false }
 
         let hubURL = "https://\(claim.hostname)"
+        log("Claim: POST \(hubURL)/api/v1/auth/claim")
 
         do {
             let result = try await cloud.claim(hubURL: hubURL, claimToken: claim.claimToken)
+            log("Claim: success — key=\(result.keyId) hub=\(result.hubId)")
 
             // Store credentials
             persistence.apiKey = result.key
@@ -191,7 +209,8 @@ final class AppState {
             await loadBuildings()
             startSyncService()
         } catch {
-            setError("Claim failed → \(hubURL)/api/v1/auth/claim: \(error.localizedDescription)")
+            log("Claim: FAILED — \(error.localizedDescription)")
+            setError("Claim failed: \(error.localizedDescription)")
             claimPhase = .enterEmail
         }
     }

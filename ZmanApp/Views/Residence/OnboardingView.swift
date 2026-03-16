@@ -3,6 +3,7 @@ import SwiftUI
 struct OnboardingView: View {
     @Environment(AppState.self) private var appState
     @State private var email = ""
+    @State private var showLog = false
 
     var body: some View {
         Group {
@@ -25,6 +26,9 @@ struct OnboardingView: View {
             if email.isEmpty {
                 email = appState.persistence.claimEmail
             }
+        }
+        .sheet(isPresented: $showLog) {
+            debugLogSheet
         }
     }
 
@@ -92,6 +96,15 @@ struct OnboardingView: View {
             .padding(.horizontal, 40)
 
             Spacer()
+
+            if !appState.debugLog.isEmpty {
+                Button { showLog = true } label: {
+                    Text("View Log")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Spacer()
         }
     }
@@ -128,11 +141,18 @@ struct OnboardingView: View {
 
             Spacer()
 
-            Button {
-                appState.cancelClaim()
-            } label: {
-                Text("Cancel")
-                    .foregroundStyle(.secondary)
+            HStack(spacing: 24) {
+                Button { showLog = true } label: {
+                    Text("View Log")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Button {
+                    appState.cancelClaim()
+                } label: {
+                    Text("Cancel")
+                        .foregroundStyle(.secondary)
+                }
             }
             .padding(.bottom, 40)
         }
@@ -190,6 +210,37 @@ struct OnboardingView: View {
     }
 
     // MARK: - Helpers
+
+    // MARK: - Debug Log
+
+    private var debugLogSheet: some View {
+        NavigationStack {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 4) {
+                        ForEach(Array(appState.debugLog.enumerated()), id: \.offset) { i, entry in
+                            Text(entry)
+                                .font(.system(.caption, design: .monospaced))
+                                .id(i)
+                        }
+                    }
+                    .padding()
+                }
+                .onAppear {
+                    if let last = appState.debugLog.indices.last {
+                        proxy.scrollTo(last, anchor: .bottom)
+                    }
+                }
+            }
+            .navigationTitle("Debug Log")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { showLog = false }
+                }
+            }
+        }
+    }
 
     private var isValidEmail: Bool {
         email.contains("@") && email.contains(".") && email.count >= 5
