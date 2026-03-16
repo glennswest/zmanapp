@@ -83,10 +83,10 @@ final class CloudService: ObservableObject, Sendable {
             }
         case 403:
             let message = String(data: data, encoding: .utf8)
-            throw APIError.serverError(403, message)
+            throw APIError.serverError(403, "\(url.absoluteString)\n\(message ?? "")")
         default:
             let message = String(data: data, encoding: .utf8)
-            throw APIError.serverError(httpResponse.statusCode, message)
+            throw APIError.serverError(httpResponse.statusCode, "\(url.absoluteString)\n\(message ?? "")")
         }
     }
 }
