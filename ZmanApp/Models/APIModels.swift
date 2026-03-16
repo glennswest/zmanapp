@@ -69,13 +69,13 @@ struct ClaimResponse: Codable {
 // MARK: - Widget Commands
 
 struct WidgetCommand: Codable {
-    let widgetId: UUID
+    let widgetId: String
     let action: String
     let parameters: [String: String]?
 }
 
 struct WidgetCommandResult: Codable {
-    let widgetId: UUID
+    let widgetId: String
     let success: Bool
     let newState: WidgetState?
     let message: String?
@@ -84,50 +84,64 @@ struct WidgetCommandResult: Codable {
 // MARK: - Building (Home/Building)
 
 struct Building: Identifiable, Codable, Hashable {
-    let id: UUID
+    let id: String
     var name: String
     var address: String
     var areas: [Area]
     var tunnelURL: String
 
-    init(
-        id: UUID = UUID(),
-        name: String,
-        address: String = "",
-        areas: [Area] = [],
-        tunnelURL: String = ""
-    ) {
+    enum CodingKeys: String, CodingKey {
+        case id, name, address, areas, tunnelURL
+    }
+
+    init(id: String, name: String, address: String = "", areas: [Area] = [], tunnelURL: String = "") {
         self.id = id
         self.name = name
         self.address = address
         self.areas = areas
         self.tunnelURL = tunnelURL
     }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decodeIfPresent(String.self, forKey: .name) ?? "Home"
+        address = try c.decodeIfPresent(String.self, forKey: .address) ?? ""
+        areas = try c.decodeIfPresent([Area].self, forKey: .areas) ?? []
+        tunnelURL = try c.decodeIfPresent(String.self, forKey: .tunnelURL) ?? ""
+    }
 }
 
 // MARK: - Area (Room/Zone/Garage)
 
 struct Area: Identifiable, Codable, Hashable {
-    let id: UUID
+    let id: String
     var name: String
     var icon: String
     var mode: RoomMode
     var widgets: [DeviceWidget]
     var sortOrder: Int
 
-    init(
-        id: UUID = UUID(),
-        name: String,
-        icon: String = "square.grid.2x2.fill",
-        mode: RoomMode = .room,
-        widgets: [DeviceWidget] = [],
-        sortOrder: Int = 0
-    ) {
+    enum CodingKeys: String, CodingKey {
+        case id, name, icon, mode, widgets, sortOrder
+    }
+
+    init(id: String, name: String, icon: String = "square.grid.2x2.fill", mode: RoomMode = .general, widgets: [DeviceWidget] = [], sortOrder: Int = 0) {
         self.id = id
         self.name = name
         self.icon = icon
         self.mode = mode
         self.widgets = widgets
         self.sortOrder = sortOrder
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decodeIfPresent(String.self, forKey: .name) ?? "Area"
+        icon = try c.decodeIfPresent(String.self, forKey: .icon) ?? "square.grid.2x2.fill"
+        mode = try c.decodeIfPresent(RoomMode.self, forKey: .mode) ?? .general
+        widgets = try c.decodeIfPresent([DeviceWidget].self, forKey: .widgets) ?? []
+        sortOrder = try c.decodeIfPresent(Int.self, forKey: .sortOrder) ?? 0
     }
 }

@@ -69,20 +69,14 @@ final class PersistenceService: ObservableObject, Sendable {
 
     // MARK: - Selection State
 
-    var selectedBuildingId: UUID? {
-        get {
-            guard let str = defaults.string(forKey: Keys.selectedBuildingId) else { return nil }
-            return UUID(uuidString: str)
-        }
-        set { defaults.set(newValue?.uuidString, forKey: Keys.selectedBuildingId) }
+    var selectedBuildingId: String? {
+        get { defaults.string(forKey: Keys.selectedBuildingId) }
+        set { defaults.set(newValue, forKey: Keys.selectedBuildingId) }
     }
 
-    var selectedAreaId: UUID? {
-        get {
-            guard let str = defaults.string(forKey: Keys.selectedAreaId) else { return nil }
-            return UUID(uuidString: str)
-        }
-        set { defaults.set(newValue?.uuidString, forKey: Keys.selectedAreaId) }
+    var selectedAreaId: String? {
+        get { defaults.string(forKey: Keys.selectedAreaId) }
+        set { defaults.set(newValue, forKey: Keys.selectedAreaId) }
     }
 
     // MARK: - Display Mode
@@ -101,12 +95,9 @@ final class PersistenceService: ObservableObject, Sendable {
         set { defaults.set(newValue.rawValue, forKey: Keys.ipadMode) }
     }
 
-    var assignedAreaId: UUID? {
-        get {
-            guard let str = defaults.string(forKey: Keys.ipadAssignedAreaId) else { return nil }
-            return UUID(uuidString: str)
-        }
-        set { defaults.set(newValue?.uuidString, forKey: Keys.ipadAssignedAreaId) }
+    var assignedAreaId: String? {
+        get { defaults.string(forKey: Keys.ipadAssignedAreaId) }
+        set { defaults.set(newValue, forKey: Keys.ipadAssignedAreaId) }
     }
 
     // MARK: - Keychain Helpers

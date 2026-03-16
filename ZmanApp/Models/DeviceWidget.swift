@@ -68,37 +68,15 @@ enum WidgetState: Codable, Hashable {
 }
 
 struct DeviceWidget: Identifiable, Codable, Hashable {
-    let id: UUID
+    let id: String
     var name: String
     var kind: WidgetKind
     var category: WidgetCategory
     var state: WidgetState
-    var roomId: UUID?
+    var roomId: String?
     var icon: String?
     var sortOrder: Int
     var metadata: [String: String]
-
-    init(
-        id: UUID = UUID(),
-        name: String,
-        kind: WidgetKind = .physical,
-        category: WidgetCategory = .switch_,
-        state: WidgetState = .unknown,
-        roomId: UUID? = nil,
-        icon: String? = nil,
-        sortOrder: Int = 0,
-        metadata: [String: String] = [:]
-    ) {
-        self.id = id
-        self.name = name
-        self.kind = kind
-        self.category = category
-        self.state = state
-        self.roomId = roomId
-        self.icon = icon
-        self.sortOrder = sortOrder
-        self.metadata = metadata
-    }
 
     var displayIcon: String {
         icon ?? category.systemImage
@@ -111,5 +89,36 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
         default:
             false
         }
+    }
+
+    // Custom decoding with defaults for optional server fields
+    enum CodingKeys: String, CodingKey {
+        case id, name, kind, category, state, roomId, icon, sortOrder, metadata
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        kind = try c.decodeIfPresent(WidgetKind.self, forKey: .kind) ?? .physical
+        category = try c.decodeIfPresent(WidgetCategory.self, forKey: .category) ?? .custom
+        state = try c.decodeIfPresent(WidgetState.self, forKey: .state) ?? .unknown
+        roomId = try c.decodeIfPresent(String.self, forKey: .roomId)
+        icon = try c.decodeIfPresent(String.self, forKey: .icon)
+        sortOrder = try c.decodeIfPresent(Int.self, forKey: .sortOrder) ?? 0
+        metadata = try c.decodeIfPresent([String: String].self, forKey: .metadata) ?? [:]
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(name, forKey: .name)
+        try c.encode(kind, forKey: .kind)
+        try c.encode(category, forKey: .category)
+        try c.encode(state, forKey: .state)
+        try c.encodeIfPresent(roomId, forKey: .roomId)
+        try c.encodeIfPresent(icon, forKey: .icon)
+        try c.encode(sortOrder, forKey: .sortOrder)
+        try c.encode(metadata, forKey: .metadata)
     }
 }

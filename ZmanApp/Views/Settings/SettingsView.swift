@@ -58,9 +58,9 @@ struct SettingsView: View {
                             get: { appState.persistence.assignedAreaId },
                             set: { appState.persistence.assignedAreaId = $0 }
                         )) {
-                            Text("Not Assigned").tag(nil as UUID?)
+                            Text("Not Assigned").tag(nil as String?)
                             ForEach(appState.currentAreas) { area in
-                                Text(area.name).tag(area.id as UUID?)
+                                Text(area.name).tag(area.id as String?)
                             }
                         }
                     }

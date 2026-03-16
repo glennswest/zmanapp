@@ -91,40 +91,40 @@ final class APIService: ObservableObject, Sendable {
         try await get("/api/v1/buildings")
     }
 
-    func fetchBuilding(id: UUID) async throws -> Building {
-        try await get("/api/v1/buildings/\(id.uuidString)")
+    func fetchBuilding(id: String) async throws -> Building {
+        try await get("/api/v1/buildings/\(id)")
     }
 
     // MARK: - Areas
 
-    func fetchAreas(buildingId: UUID) async throws -> [Area] {
-        try await get("/api/v1/buildings/\(buildingId.uuidString)/areas")
+    func fetchAreas(buildingId: String) async throws -> [Area] {
+        try await get("/api/v1/buildings/\(buildingId)/areas")
     }
 
-    func fetchArea(buildingId: UUID, areaId: UUID) async throws -> Area {
-        try await get("/api/v1/buildings/\(buildingId.uuidString)/areas/\(areaId.uuidString)")
+    func fetchArea(buildingId: String, areaId: String) async throws -> Area {
+        try await get("/api/v1/buildings/\(buildingId)/areas/\(areaId)")
     }
 
     // MARK: - Widgets
 
-    func fetchWidgets(buildingId: UUID, areaId: UUID? = nil) async throws -> [DeviceWidget] {
-        var path = "/api/v1/buildings/\(buildingId.uuidString)/widgets"
+    func fetchWidgets(buildingId: String, areaId: String? = nil) async throws -> [DeviceWidget] {
+        var path = "/api/v1/buildings/\(buildingId)/widgets"
         if let areaId {
-            path = "/api/v1/buildings/\(buildingId.uuidString)/areas/\(areaId.uuidString)/widgets"
+            path = "/api/v1/buildings/\(buildingId)/areas/\(areaId)/widgets"
         }
         return try await get(path)
     }
 
     func sendCommand(_ command: WidgetCommand) async throws -> WidgetCommandResult {
-        try await post("/api/v1/widgets/\(command.widgetId.uuidString)/command", body: command)
+        try await post("/api/v1/widgets/\(command.widgetId)/command", body: command)
     }
 
-    func toggleWidget(id: UUID) async throws -> WidgetCommandResult {
+    func toggleWidget(id: String) async throws -> WidgetCommandResult {
         let command = WidgetCommand(widgetId: id, action: "toggle", parameters: nil)
         return try await sendCommand(command)
     }
 
-    func setWidgetState(id: UUID, action: String, parameters: [String: String]? = nil) async throws -> WidgetCommandResult {
+    func setWidgetState(id: String, action: String, parameters: [String: String]? = nil) async throws -> WidgetCommandResult {
         let command = WidgetCommand(widgetId: id, action: action, parameters: parameters)
         return try await sendCommand(command)
     }
