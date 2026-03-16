@@ -174,6 +174,7 @@ final class APIService: ObservableObject, Sendable {
     }
 
     private func execute<T: Decodable>(_ request: URLRequest) async throws -> T {
+        let url = request.url?.absoluteString ?? "?"
         let data: Data
         let response: URLResponse
 
@@ -200,8 +201,8 @@ final class APIService: ObservableObject, Sendable {
             isAuthenticated = false
             throw APIError.unauthorized
         default:
-            let message = String(data: data, encoding: .utf8)
-            throw APIError.serverError(httpResponse.statusCode, message)
+            let body = String(data: data, encoding: .utf8)
+            throw APIError.serverError(httpResponse.statusCode, "\(url)\n\(body ?? "")")
         }
     }
 }

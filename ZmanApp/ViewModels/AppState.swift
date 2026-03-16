@@ -68,9 +68,11 @@ final class AppState {
         let hubHostname = persistence.hubHostname
         if !apiKey.isEmpty && !hubHostname.isEmpty {
             let serverURL = "https://\(hubHostname)"
+            log("Init: API key auth → \(serverURL)")
             api.configure(baseURL: serverURL, apiKey: apiKey)
 
             let connected = await api.checkConnection()
+            log("Init: health check → \(connected ? "OK" : "FAILED")")
             if connected {
                 isAuthenticated = true
                 await loadBuildings()
@@ -82,12 +84,14 @@ final class AppState {
         // Legacy: check for bearer token auth
         let serverURL = persistence.serverURL
         if !serverURL.isEmpty && !persistence.accessToken.isEmpty {
+            log("Init: legacy token auth → \(serverURL)")
             api.configure(
                 baseURL: serverURL,
                 accessToken: persistence.accessToken,
                 refreshToken: persistence.refreshToken
             )
             let connected = await api.checkConnection()
+            log("Init: health check → \(connected ? "OK" : "FAILED")")
             if connected {
                 isAuthenticated = true
                 await loadBuildings()
@@ -97,6 +101,7 @@ final class AppState {
         }
 
         // No valid auth — show onboarding
+        log("Init: no valid auth, showing onboarding")
         showOnboarding = true
     }
 
@@ -242,8 +247,10 @@ final class AppState {
         isLoading = true
         defer { isLoading = false }
 
+        log("LoadBuildings: GET /api/v1/buildings")
         do {
             buildings = try await api.fetchBuildings()
+            log("LoadBuildings: OK — \(buildings.count) building(s)")
             // Restore last selected building
             if let savedId = persistence.selectedBuildingId {
                 selectedBuilding = buildings.first(where: { $0.id == savedId })
@@ -256,6 +263,7 @@ final class AppState {
                 persistence.selectedBuildingId = building.id
             }
         } catch {
+            log("LoadBuildings: FAILED — \(error.localizedDescription)")
             setError(error.localizedDescription)
         }
     }
