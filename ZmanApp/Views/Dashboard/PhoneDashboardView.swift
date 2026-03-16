@@ -9,9 +9,24 @@ struct PhoneDashboardView: View {
                 dashboardTabs
 
                 ScrollView {
-                    LazyVGrid(columns: gridColumns, spacing: 10) {
-                        ForEach(dashboardCells) { cell in
-                            DashboardCellView(cell: cell)
+                    VStack(spacing: 12) {
+                        // Regular widgets (garage, sensors) in 3-column grid
+                        if !regularWidgets.isEmpty {
+                            LazyVGrid(columns: gridColumns, spacing: 10) {
+                                ForEach(regularWidgets) { widget in
+                                    regularWidgetView(widget)
+                                }
+                            }
+                        }
+
+                        // Full-width thermostat cards
+                        ForEach(thermostatWidgets) { widget in
+                            ThermostatCard(widget: widget)
+                        }
+
+                        // Weather locations — rotating cards
+                        ForEach(weatherLocations, id: \.locationId) { loc in
+                            WeatherLocationCard(location: loc)
                         }
                     }
                     .padding(10)
@@ -83,23 +98,49 @@ struct PhoneDashboardView: View {
         }
     }
 
-    // MARK: - Dashboard Cells
+    // MARK: - Widget Groups
 
-    /// Expand widgets into dashboard cells — thermostats become 3 cells
-    private var dashboardCells: [DashboardCell] {
-        var cells: [DashboardCell] = []
-        for widget in appState.currentDashboardWidgets {
-            if widget.widgetType == .thermostat {
-                cells.append(.thermostatSetpoint(widget))
-                cells.append(.thermostatRoom(widget))
-                cells.append(.thermostatFan(widget))
-            } else if widget.widgetType == .weather {
-                cells.append(.widget(widget))
-            } else {
-                cells.append(.widget(widget))
-            }
+    private var regularWidgets: [DeviceWidget] {
+        appState.currentDashboardWidgets.filter {
+            $0.widgetType != .thermostat && $0.widgetType != .weather
         }
-        return cells
+    }
+
+    private var thermostatWidgets: [DeviceWidget] {
+        appState.currentDashboardWidgets.filter { $0.widgetType == .thermostat }
+    }
+
+    private var weatherLocations: [WeatherLocation] {
+        let wx = appState.currentDashboardWidgets.filter { $0.widgetType == .weather }
+        let grouped = Dictionary(grouping: wx) { $0.deviceId }
+        return grouped.map { deviceId, widgets in
+            let name = deviceId
+                .replacingOccurrences(of: "virtual.weather.", with: "")
+                .capitalized
+            return WeatherLocation(
+                locationId: deviceId,
+                name: name,
+                current: widgets.first { ($0.widgetProperty ?? "").isEmpty },
+                today: widgets.first { $0.widgetProperty == "today" },
+                tomorrow: widgets.first { $0.widgetProperty == "tomorrow" }
+            )
+        }.sorted { $0.name < $1.name }
+    }
+
+    // MARK: - Regular Widget View
+
+    @ViewBuilder
+    private func regularWidgetView(_ widget: DeviceWidget) -> some View {
+        switch widget.widgetType {
+        case .garage:
+            GarageDoorWidget(widget: widget) {
+                Task { await appState.toggleWidget(widget) }
+            }
+        case .sensor:
+            SensorWidget(widget: widget)
+        default:
+            GenericWidget(widget: widget)
+        }
     }
 
     private var gridColumns: [GridItem] {
@@ -109,73 +150,315 @@ struct PhoneDashboardView: View {
     }
 }
 
-// MARK: - Dashboard Cell (one grid item)
+// MARK: - Weather Location (groups 3 widgets for one place)
 
-enum DashboardCell: Identifiable {
-    case widget(DeviceWidget)
-    case thermostatSetpoint(DeviceWidget)
-    case thermostatRoom(DeviceWidget)
-    case thermostatFan(DeviceWidget)
+struct WeatherLocation {
+    let locationId: String
+    let name: String
+    let current: DeviceWidget?
+    let today: DeviceWidget?
+    let tomorrow: DeviceWidget?
 
-    var id: String {
-        switch self {
-        case .widget(let w): w.id
-        case .thermostatSetpoint(let w): "\(w.id)-sp"
-        case .thermostatRoom(let w): "\(w.id)-rm"
-        case .thermostatFan(let w): "\(w.id)-fn"
-        }
+    var pageCount: Int {
+        (current != nil ? 1 : 0) + (today != nil ? 1 : 0) + (tomorrow != nil ? 1 : 0)
     }
 }
 
-struct DashboardCellView: View {
-    let cell: DashboardCell
-    @Environment(AppState.self) private var appState
+// MARK: - Weather Location Card (rotating pages)
+
+struct WeatherLocationCard: View {
+    let location: WeatherLocation
+    @State private var currentPage = 0
+    @State private var timer: Timer?
 
     var body: some View {
-        switch cell {
-        case .widget(let w):
-            widgetView(w)
-        case .thermostatSetpoint(let w):
-            ThermostatSetpointTile(widget: w)
-        case .thermostatRoom(let w):
-            ThermostatRoomTile(widget: w)
-        case .thermostatFan(let w):
-            ThermostatFanTile(widget: w)
-        }
-    }
-
-    @ViewBuilder
-    private func widgetView(_ widget: DeviceWidget) -> some View {
-        switch widget.widgetType {
-        case .garage:
-            GarageDoorWidget(widget: widget) {
-                Task { await appState.toggleWidget(widget) }
+        VStack(spacing: 0) {
+            // Header: location name + page dots
+            HStack {
+                Text(location.name)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AppTheme.dashText)
+                Spacer()
+                HStack(spacing: 5) {
+                    ForEach(0..<location.pageCount, id: \.self) { i in
+                        Circle()
+                            .fill(i == currentPage ? AppTheme.dashBlue : AppTheme.dashBorder)
+                            .frame(width: 6, height: 6)
+                    }
+                }
             }
-        case .sensor:
-            SensorWidget(widget: widget)
-        case .weather:
-            weatherView(widget)
-        case .thermostat:
-            GenericWidget(widget: widget)
-        case .plug, .unknown:
-            GenericWidget(widget: widget)
+            .padding(.horizontal, 14)
+            .padding(.top, 12)
+            .padding(.bottom, 6)
+
+            // Pages
+            pageContent
+                .frame(height: 90)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 30)
+                        .onEnded { value in
+                            if value.translation.width < -30 {
+                                withAnimation { currentPage = min(currentPage + 1, location.pageCount - 1) }
+                            } else if value.translation.width > 30 {
+                                withAnimation { currentPage = max(currentPage - 1, 0) }
+                            }
+                            restartTimer()
+                        }
+                )
+
+            Spacer().frame(height: 8)
         }
+        .background(AppTheme.dashCard)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(AppTheme.dashBorder, lineWidth: 1))
+        .onAppear { startTimer() }
+        .onDisappear { timer?.invalidate() }
     }
 
     @ViewBuilder
-    private func weatherView(_ widget: DeviceWidget) -> some View {
-        let prop = widget.widgetProperty ?? ""
-        if prop == "today" {
-            WeatherForecastWidget(widget: widget, period: "Today",
-                                  high: widget.properties["todayHigh"]?.doubleValue,
-                                  low: widget.properties["todayLow"]?.doubleValue)
-        } else if prop == "tomorrow" {
-            WeatherForecastWidget(widget: widget, period: "Tomorrow",
-                                  high: widget.properties["tomorrowHigh"]?.doubleValue,
-                                  low: widget.properties["tomorrowLow"]?.doubleValue)
-        } else {
-            WeatherCurrentWidget(widget: widget)
+    private var pageContent: some View {
+        let pages = buildPages()
+        if currentPage < pages.count {
+            pages[currentPage]
         }
+    }
+
+    private func buildPages() -> [AnyView] {
+        var pages: [AnyView] = []
+        if let w = location.current {
+            pages.append(AnyView(weatherCurrentPage(w)))
+        }
+        if let w = location.today {
+            pages.append(AnyView(weatherForecastPage(w, period: "Today",
+                high: w.properties["todayHigh"]?.doubleValue,
+                low: w.properties["todayLow"]?.doubleValue)))
+        }
+        if let w = location.tomorrow {
+            pages.append(AnyView(weatherForecastPage(w, period: "Tomorrow",
+                high: w.properties["tomorrowHigh"]?.doubleValue,
+                low: w.properties["tomorrowLow"]?.doubleValue)))
+        }
+        return pages
+    }
+
+    private func startTimer() {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+            Task { @MainActor in
+                withAnimation {
+                    currentPage = (currentPage + 1) % max(location.pageCount, 1)
+                }
+            }
+        }
+    }
+
+    private func restartTimer() {
+        startTimer()
+    }
+
+    // MARK: - Current Conditions Page
+
+    private func weatherCurrentPage(_ widget: DeviceWidget) -> some View {
+        HStack(spacing: 20) {
+            VStack(spacing: 4) {
+                Text(widget.formatTemp(widget.temperature))
+                    .font(.system(size: 30, weight: .bold))
+                    .foregroundStyle(AppTheme.dashBlue)
+                if let cond = widget.condition {
+                    Text(cond)
+                        .font(.system(size: 13))
+                        .foregroundStyle(AppTheme.dashSecondary)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 4) {
+                    Image(systemName: "drop.fill")
+                        .font(.system(size: 11))
+                        .foregroundStyle(AppTheme.dashBlue.opacity(0.8))
+                    Text(widget.formatHumidity(widget.humidity))
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(AppTheme.dashText)
+                }
+                if let wind = widget.windSpeed {
+                    HStack(spacing: 4) {
+                        Image(systemName: "location.north.fill")
+                            .font(.system(size: 11))
+                            .foregroundStyle(AppTheme.dashSecondary)
+                            .rotationEffect(.degrees(widget.windDirection ?? 0))
+                        Text(String(format: "%.0f km/h", wind))
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundStyle(AppTheme.dashText)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 14)
+    }
+
+    // MARK: - Forecast Page
+
+    private func weatherForecastPage(_ widget: DeviceWidget, period: String, high: Double?, low: Double?) -> some View {
+        VStack(spacing: 6) {
+            Text(period)
+                .font(.system(size: 13))
+                .foregroundStyle(AppTheme.dashSecondary)
+
+            HStack(spacing: 40) {
+                VStack(spacing: 2) {
+                    Text(formatDeg(high))
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundStyle(AppTheme.dashRed)
+                    Text("High")
+                        .font(.system(size: 12))
+                        .foregroundStyle(AppTheme.dashSecondary)
+                }
+                VStack(spacing: 2) {
+                    Text(formatDeg(low))
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundStyle(AppTheme.dashBlue)
+                    Text("Low")
+                        .font(.system(size: 12))
+                        .foregroundStyle(AppTheme.dashSecondary)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func formatDeg(_ value: Double?) -> String {
+        guard let v = value else { return "--" }
+        return String(format: "%.0f°", v)
+    }
+}
+
+// MARK: - Thermostat Card (full width, 3 sections)
+
+struct ThermostatCard: View {
+    let widget: DeviceWidget
+    @Environment(AppState.self) private var appState
+
+    private var modeColor: Color {
+        switch widget.thermostatMode {
+        case "heat": AppTheme.dashOrange
+        case "cool": AppTheme.dashBlue
+        default: AppTheme.dashSecondary
+        }
+    }
+
+    private var displaySetpoint: Double? {
+        widget.setpoint ?? widget.desiredTemp
+    }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            // Header
+            HStack {
+                Text(widget.label)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AppTheme.dashText)
+                    .lineLimit(1)
+                Spacer()
+                if let state = widget.thermostatState {
+                    Text(state)
+                        .font(.system(size: 12))
+                        .foregroundStyle(modeColor)
+                }
+            }
+
+            // 3-section horizontal layout
+            HStack(spacing: 0) {
+                // Setpoint
+                VStack(spacing: 4) {
+                    Text(widget.formatTemp(displaySetpoint))
+                        .font(.system(size: 26, weight: .bold))
+                        .foregroundStyle(modeColor)
+                    Text("Setpoint")
+                        .font(.system(size: 10))
+                        .foregroundStyle(AppTheme.dashSecondary)
+                    HStack(spacing: 14) {
+                        Button {
+                            Task { await appState.sendWidgetCommand(widget, command: "set_desired_temp_up") }
+                        } label: {
+                            Image(systemName: "arrowtriangle.up.fill")
+                                .font(.system(size: 10))
+                                .foregroundStyle(AppTheme.dashText)
+                                .frame(width: 30, height: 26)
+                                .background(AppTheme.dashBorder.opacity(0.5))
+                                .clipShape(RoundedRectangle(cornerRadius: 4))
+                        }
+                        Button {
+                            Task { await appState.sendWidgetCommand(widget, command: "set_desired_temp_down") }
+                        } label: {
+                            Image(systemName: "arrowtriangle.down.fill")
+                                .font(.system(size: 10))
+                                .foregroundStyle(AppTheme.dashText)
+                                .frame(width: 30, height: 26)
+                                .background(AppTheme.dashBorder.opacity(0.5))
+                                .clipShape(RoundedRectangle(cornerRadius: 4))
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity)
+
+                Rectangle()
+                    .fill(AppTheme.dashBorder)
+                    .frame(width: 1, height: 70)
+
+                // Room temp + humidity
+                VStack(spacing: 4) {
+                    Text(widget.formatTemp(widget.roomTemp))
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundStyle(AppTheme.dashText)
+                    HStack(spacing: 3) {
+                        Image(systemName: "drop.fill")
+                            .font(.system(size: 11))
+                            .foregroundStyle(AppTheme.dashGreen)
+                        Text(widget.formatHumidity(widget.humidity))
+                            .font(.system(size: 14))
+                            .foregroundStyle(AppTheme.dashGreen)
+                    }
+                    Text("Room")
+                        .font(.system(size: 10))
+                        .foregroundStyle(AppTheme.dashSecondary)
+                }
+                .frame(maxWidth: .infinity)
+
+                Rectangle()
+                    .fill(AppTheme.dashBorder)
+                    .frame(width: 1, height: 70)
+
+                // Fan mode
+                VStack(spacing: 4) {
+                    Image(systemName: "fan.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(AppTheme.dashSecondary)
+                    Text(widget.fanMode ?? "--")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(AppTheme.dashText)
+                    Button {
+                        Task { await appState.sendWidgetCommand(widget, command: "set_fan_mode") }
+                    } label: {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 12))
+                            .foregroundStyle(AppTheme.dashBlue)
+                            .frame(width: 30, height: 26)
+                            .background(AppTheme.dashBorder.opacity(0.5))
+                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .padding(14)
+        .background(AppTheme.dashCard)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(AppTheme.dashBorder, lineWidth: 1)
+        )
     }
 }
 
@@ -305,219 +588,6 @@ struct SensorWidget: View {
         }
         .frame(maxWidth: .infinity)
         .dashCardStyle()
-    }
-}
-
-// MARK: - Thermostat Tiles (3 separate cards)
-
-struct ThermostatSetpointTile: View {
-    let widget: DeviceWidget
-    @Environment(AppState.self) private var appState
-
-    private var modeColor: Color {
-        switch widget.thermostatMode {
-        case "heat": AppTheme.dashOrange
-        case "cool": AppTheme.dashBlue
-        default: AppTheme.dashSecondary
-        }
-    }
-
-    var body: some View {
-        VStack(spacing: 2) {
-            Text(widget.formatTemp(widget.desiredTemp))
-                .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(modeColor)
-
-            if let state = widget.thermostatState {
-                Text(state)
-                    .font(.system(size: 8))
-                    .foregroundStyle(modeColor.opacity(0.8))
-            }
-
-            HStack(spacing: 10) {
-                Button {
-                    Task { await appState.sendWidgetCommand(widget, command: "set_desired_temp_up") }
-                } label: {
-                    Image(systemName: "arrowtriangle.up.fill")
-                        .font(.system(size: 7))
-                        .foregroundStyle(AppTheme.dashSecondary)
-                        .frame(width: 20, height: 16)
-                        .background(AppTheme.dashBorder.opacity(0.5))
-                        .clipShape(RoundedRectangle(cornerRadius: 3))
-                }
-                Button {
-                    Task { await appState.sendWidgetCommand(widget, command: "set_desired_temp_down") }
-                } label: {
-                    Image(systemName: "arrowtriangle.down.fill")
-                        .font(.system(size: 7))
-                        .foregroundStyle(AppTheme.dashSecondary)
-                        .frame(width: 20, height: 16)
-                        .background(AppTheme.dashBorder.opacity(0.5))
-                        .clipShape(RoundedRectangle(cornerRadius: 3))
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .dashCardStyle()
-    }
-}
-
-struct ThermostatRoomTile: View {
-    let widget: DeviceWidget
-
-    var body: some View {
-        VStack(spacing: 2) {
-            Text(widget.formatTemp(widget.roomTemp))
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(AppTheme.dashText)
-
-            HStack(spacing: 2) {
-                Image(systemName: "drop.fill")
-                    .font(.system(size: 7))
-                    .foregroundStyle(AppTheme.dashGreen)
-                Text(widget.formatHumidity(widget.humidity))
-                    .font(.system(size: 10))
-                    .foregroundStyle(AppTheme.dashGreen)
-            }
-
-            Text("Room")
-                .font(.system(size: 9))
-                .foregroundStyle(AppTheme.dashSecondary)
-        }
-        .frame(maxWidth: .infinity)
-        .dashCardStyle()
-    }
-}
-
-struct ThermostatFanTile: View {
-    let widget: DeviceWidget
-    @Environment(AppState.self) private var appState
-
-    var body: some View {
-        VStack(spacing: 4) {
-            Image(systemName: "gearshape")
-                .font(.system(size: 12))
-                .foregroundStyle(AppTheme.dashSecondary)
-
-            Text(widget.fanMode ?? "--")
-                .font(.system(size: 10, weight: .medium))
-                .foregroundStyle(AppTheme.dashText)
-
-            Button {
-                Task { await appState.sendWidgetCommand(widget, command: "set_fan_mode") }
-            } label: {
-                Image(systemName: "arrow.triangle.2.circlepath")
-                    .font(.system(size: 10))
-                    .foregroundStyle(AppTheme.dashBlue)
-                    .frame(width: 22, height: 18)
-                    .background(AppTheme.dashBorder.opacity(0.5))
-                    .clipShape(RoundedRectangle(cornerRadius: 3))
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .dashCardStyle()
-    }
-}
-
-// MARK: - Weather Forecast Widget (Today/Tomorrow high-low)
-
-struct WeatherForecastWidget: View {
-    let widget: DeviceWidget
-    let period: String
-    let high: Double?
-    let low: Double?
-
-    var body: some View {
-        VStack(spacing: 3) {
-            Text(period)
-                .font(.system(size: 9))
-                .foregroundStyle(AppTheme.dashSecondary)
-
-            HStack(spacing: 8) {
-                VStack(spacing: 1) {
-                    Text(formatDeg(high))
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(AppTheme.dashRed)
-                    Text("High")
-                        .font(.system(size: 7))
-                        .foregroundStyle(AppTheme.dashSecondary)
-                }
-                VStack(spacing: 1) {
-                    Text(formatDeg(low))
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(AppTheme.dashBlue)
-                    Text("Low")
-                        .font(.system(size: 7))
-                        .foregroundStyle(AppTheme.dashSecondary)
-                }
-            }
-
-            Text(widget.label)
-                .font(.system(size: 9))
-                .foregroundStyle(AppTheme.dashSecondary)
-                .lineLimit(1)
-        }
-        .frame(maxWidth: .infinity)
-        .dashCardStyle()
-    }
-
-    private func formatDeg(_ value: Double?) -> String {
-        guard let v = value else { return "--" }
-        return String(format: "%.0f°", v)
-    }
-}
-
-// MARK: - Weather Current Conditions Widget (temp, humidity, wind)
-
-struct WeatherCurrentWidget: View {
-    let widget: DeviceWidget
-
-    var body: some View {
-        VStack(spacing: 2) {
-            Text(widget.formatTemp(widget.temperature))
-                .font(.system(size: 14, weight: .bold))
-                .foregroundStyle(AppTheme.dashBlue)
-
-            if let cond = widget.condition {
-                Text(cond)
-                    .font(.system(size: 8))
-                    .foregroundStyle(AppTheme.dashSecondary)
-                    .lineLimit(1)
-            }
-
-            HStack(spacing: 2) {
-                Image(systemName: "drop.fill")
-                    .font(.system(size: 7))
-                    .foregroundStyle(AppTheme.dashBlue.opacity(0.8))
-                Text(widget.formatHumidity(widget.humidity))
-                    .font(.system(size: 9))
-                    .foregroundStyle(AppTheme.dashSecondary)
-            }
-
-            if let wind = widget.windSpeed {
-                HStack(spacing: 2) {
-                    windArrow(degrees: widget.windDirection ?? 0)
-                        .frame(width: 10, height: 10)
-                    Text(String(format: "%.0f km/h", wind))
-                        .font(.system(size: 9))
-                        .foregroundStyle(AppTheme.dashSecondary)
-                }
-            }
-
-            Text(widget.label)
-                .font(.system(size: 9))
-                .foregroundStyle(AppTheme.dashSecondary)
-                .lineLimit(1)
-        }
-        .frame(maxWidth: .infinity)
-        .dashCardStyle()
-    }
-
-    private func windArrow(degrees: Double) -> some View {
-        Image(systemName: "location.north.fill")
-            .font(.system(size: 8))
-            .foregroundStyle(AppTheme.dashSecondary)
-            .rotationEffect(.degrees(degrees))
     }
 }
 

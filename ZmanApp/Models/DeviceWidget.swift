@@ -121,6 +121,9 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
     /// Thermostat desired temperature
     var desiredTemp: Double? { properties["desiredTemp"]?.doubleValue }
 
+    /// Active HVAC setpoint (the one the system is targeting)
+    var setpoint: Double? { properties["setpoint"]?.doubleValue }
+
     /// Thermostat room temperature
     var roomTemp: Double? { properties["roomTemp"]?.doubleValue }
 

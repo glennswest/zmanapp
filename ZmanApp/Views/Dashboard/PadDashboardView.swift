@@ -13,7 +13,6 @@ struct PadDashboardView: View {
             case .general:
                 generalMode
             case .room, .garage:
-                // Room and garage modes use the same dashboard
                 generalMode
             }
         }
@@ -81,18 +80,33 @@ struct PadDashboardView: View {
         }
     }
 
-    private var dashboardCells: [DashboardCell] {
-        var cells: [DashboardCell] = []
-        for widget in appState.currentDashboardWidgets {
-            if widget.widgetType == .thermostat {
-                cells.append(.thermostatSetpoint(widget))
-                cells.append(.thermostatRoom(widget))
-                cells.append(.thermostatFan(widget))
-            } else {
-                cells.append(.widget(widget))
-            }
+    // MARK: - Widget Groups
+
+    private var regularWidgets: [DeviceWidget] {
+        appState.currentDashboardWidgets.filter {
+            $0.widgetType != .thermostat && $0.widgetType != .weather
         }
-        return cells
+    }
+
+    private var thermostatWidgets: [DeviceWidget] {
+        appState.currentDashboardWidgets.filter { $0.widgetType == .thermostat }
+    }
+
+    private var weatherLocations: [WeatherLocation] {
+        let wx = appState.currentDashboardWidgets.filter { $0.widgetType == .weather }
+        let grouped = Dictionary(grouping: wx) { $0.deviceId }
+        return grouped.map { deviceId, widgets in
+            let name = deviceId
+                .replacingOccurrences(of: "virtual.weather.", with: "")
+                .capitalized
+            return WeatherLocation(
+                locationId: deviceId,
+                name: name,
+                current: widgets.first { ($0.widgetProperty ?? "").isEmpty },
+                today: widgets.first { $0.widgetProperty == "today" },
+                tomorrow: widgets.first { $0.widgetProperty == "tomorrow" }
+            )
+        }.sorted { $0.name < $1.name }
     }
 
     private var dashboardDetail: some View {
@@ -100,16 +114,40 @@ struct PadDashboardView: View {
             VStack(spacing: 16) {
                 connectionHeader
 
-                LazyVGrid(columns: AppTheme.padColumns, spacing: 16) {
-                    ForEach(dashboardCells) { cell in
-                        DashboardCellView(cell: cell)
+                if !regularWidgets.isEmpty {
+                    LazyVGrid(columns: AppTheme.padColumns, spacing: 16) {
+                        ForEach(regularWidgets) { widget in
+                            padWidgetView(widget)
+                        }
                     }
+                }
+
+                ForEach(thermostatWidgets) { widget in
+                    ThermostatCard(widget: widget)
+                }
+
+                ForEach(weatherLocations, id: \.locationId) { loc in
+                    WeatherLocationCard(location: loc)
                 }
             }
             .padding()
         }
         .background(AppTheme.dashBackground)
         .navigationTitle(appState.dashboardName(appState.selectedDashboard))
+    }
+
+    @ViewBuilder
+    private func padWidgetView(_ widget: DeviceWidget) -> some View {
+        switch widget.widgetType {
+        case .garage:
+            GarageDoorWidget(widget: widget) {
+                Task { await appState.toggleWidget(widget) }
+            }
+        case .sensor:
+            SensorWidget(widget: widget)
+        default:
+            GenericWidget(widget: widget)
+        }
     }
 
     // MARK: - Shared Components
