@@ -3,13 +3,17 @@
 ## [Unreleased]
 
 ### 2026-03-16
-- **feat:** Split thermostat into 3 separate grid tiles — setpoint (mode-colored), room temp/humidity, fan mode
+- **feat:** Full-width thermostat card — setpoint (26pt, mode-colored), room temp (24pt), fan mode in 3-section horizontal layout with dividers
+- **feat:** Rotating weather cards per location — groups Algood/Cookeville widgets, auto-rotates current→today→tomorrow every 5s with swipe support
+- **feat:** Weather fonts now 28-30pt for temps, readable condition/humidity/wind info
+- **feat:** Add `setpoint` property accessor (hub's active HVAC target, preferred over desiredTemp)
+- **refactor:** Sectioned dashboard layout — regular widgets in grid, thermostat and weather as full-width cards
+- **refactor:** Remove DashboardCell enum — replaced by sectioned VStack approach
 - **feat:** Weather routing via hub `property` field (today/tomorrow/null) instead of ID matching
 - **feat:** WeatherCurrentWidget shows condition text, wind direction compass arrow, wind speed
 - **feat:** Add `widgetTypeRaw` and `widgetProperty` fields to DeviceWidget for hub type/property decoding
 - **feat:** Add `tempUnit` field to Building model from hub API
 - **feat:** Add thermostatMode, thermostatState, condition, windDirection property accessors
-- **fix:** PadDashboardView now uses DashboardCell expansion (was referencing missing DashboardWidgetView)
 - **fix:** Fix unreachable default case in widget type switch
 - **feat:** Rewrite dashboard UI to match web UI — dark theme, dashboard tabs (Main/Weather), garage door panel icons, sensor/thermostat/weather widget cards
 - **feat:** Add PropertyValue type for flexible JSON property parsing (string/number/bool)
