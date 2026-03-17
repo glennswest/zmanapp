@@ -151,6 +151,8 @@ struct PhoneDashboardView: View {
             }
         case .sensor:
             SensorWidget(widget: widget)
+        case .plug:
+            PlugWidget(widget: widget)
         default:
             GenericWidget(widget: widget)
         }
@@ -729,6 +731,72 @@ struct SensorWidget: View {
         }
         .frame(maxWidth: .infinity)
         .dashCardStyle()
+    }
+}
+
+// MARK: - Plug Widget
+
+struct PlugWidget: View {
+    let widget: DeviceWidget
+    @Environment(AppState.self) private var appState
+    @State private var isOn: Bool = false
+    @State private var isSending = false
+
+    private var iconColor: Color {
+        isOn ? AppTheme.dashGreen : AppTheme.dashSecondary
+    }
+
+    private var borderColor: Color {
+        isOn ? AppTheme.dashGreen : AppTheme.dashBorder
+    }
+
+    var body: some View {
+        Button {
+            guard !isSending else { return }
+            // Optimistic toggle
+            withAnimation(.easeInOut(duration: 0.25)) {
+                isOn.toggle()
+            }
+            let command = isOn ? "on" : "off"
+            isSending = true
+            Task {
+                await appState.sendWidgetCommand(widget, command: command)
+                isSending = false
+            }
+        } label: {
+            VStack(spacing: 4) {
+                Image(systemName: "powerplug.fill")
+                    .font(.system(size: 28))
+                    .foregroundStyle(iconColor)
+                    .scaleEffect(isOn ? 1.1 : 1.0)
+
+                Text(isOn ? "On" : "Off")
+                    .font(.system(size: 11))
+                    .foregroundStyle(isOn ? AppTheme.dashGreen : AppTheme.dashSecondary)
+
+                Text(widget.label)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(AppTheme.dashText)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(10)
+            .background(isOn ? AppTheme.dashGreen.opacity(0.1) : AppTheme.dashCard)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(borderColor, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .onAppear {
+            isOn = widget.onOff
+        }
+        .onChange(of: widget.onOff) { _, newValue in
+            withAnimation(.easeInOut(duration: 0.25)) {
+                isOn = newValue
+            }
+        }
     }
 }
 

@@ -158,6 +158,9 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
     var tomorrowHigh: Double? { properties["tomorrow_high"]?.doubleValue }
     var tomorrowLow: Double? { properties["tomorrow_low"]?.doubleValue }
 
+    /// Plug on/off state
+    var onOff: Bool { properties["on_off"]?.boolValue ?? false }
+
     // Garage convenience
     var isGarageClosed: Bool { state == "closed" }
     var isGarageOpen: Bool { state == "open" }

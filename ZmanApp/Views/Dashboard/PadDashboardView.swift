@@ -145,6 +145,8 @@ struct PadDashboardView: View {
             }
         case .sensor:
             SensorWidget(widget: widget)
+        case .plug:
+            PlugWidget(widget: widget)
         default:
             GenericWidget(widget: widget)
         }
