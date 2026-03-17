@@ -525,7 +525,7 @@ struct ThermostatCard: View {
                 // Room temp + humidity
                 VStack(spacing: 4) {
                     Text(widget.formatTemp(widget.roomTemp))
-                        .font(.system(size: 26, weight: .semibold))
+                        .font(.system(size: 28, weight: .semibold))
                         .foregroundStyle(AppTheme.dashText)
                     HStack(spacing: 3) {
                         Image(systemName: "drop.fill")
