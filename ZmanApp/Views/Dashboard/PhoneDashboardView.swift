@@ -164,19 +164,20 @@ struct WeatherLocation {
     }
 }
 
-// MARK: - Weather Location Card (rotating pages)
+// MARK: - Weather Location Card (rotating pages, tappable)
 
 struct WeatherLocationCard: View {
     let location: WeatherLocation
     @State private var currentPage = 0
     @State private var timer: Timer?
+    @State private var showDetail = false
 
     var body: some View {
         VStack(spacing: 0) {
             // Header: location name + page dots
             HStack {
                 Text(location.name)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(AppTheme.dashText)
                 Spacer()
                 HStack(spacing: 5) {
@@ -187,13 +188,13 @@ struct WeatherLocationCard: View {
                     }
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.top, 12)
+            .padding(.horizontal, 16)
+            .padding(.top, 14)
             .padding(.bottom, 6)
 
             // Pages
             pageContent
-                .frame(height: 90)
+                .frame(height: 100)
                 .contentShape(Rectangle())
                 .gesture(
                     DragGesture(minimumDistance: 30)
@@ -206,14 +207,20 @@ struct WeatherLocationCard: View {
                             restartTimer()
                         }
                 )
+                .onTapGesture {
+                    showDetail = true
+                }
 
-            Spacer().frame(height: 8)
+            Spacer().frame(height: 10)
         }
         .background(AppTheme.dashCard)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(RoundedRectangle(cornerRadius: 12).stroke(AppTheme.dashBorder, lineWidth: 1))
         .onAppear { startTimer() }
         .onDisappear { timer?.invalidate() }
+        .sheet(isPresented: $showDetail) {
+            WeatherDetailSheet(location: location)
+        }
     }
 
     @ViewBuilder
@@ -231,20 +238,18 @@ struct WeatherLocationCard: View {
         }
         if let w = location.today {
             pages.append(AnyView(weatherForecastPage(w, period: "Today",
-                high: w.properties["todayHigh"]?.doubleValue,
-                low: w.properties["todayLow"]?.doubleValue)))
+                high: w.todayHigh, low: w.todayLow)))
         }
         if let w = location.tomorrow {
             pages.append(AnyView(weatherForecastPage(w, period: "Tomorrow",
-                high: w.properties["tomorrowHigh"]?.doubleValue,
-                low: w.properties["tomorrowLow"]?.doubleValue)))
+                high: w.tomorrowHigh, low: w.tomorrowLow)))
         }
         return pages
     }
 
     private func startTimer() {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { _ in
             Task { @MainActor in
                 withAnimation {
                     currentPage = (currentPage + 1) % max(location.pageCount, 1)
@@ -262,12 +267,15 @@ struct WeatherLocationCard: View {
     private func weatherCurrentPage(_ widget: DeviceWidget) -> some View {
         HStack(spacing: 20) {
             VStack(spacing: 4) {
+                Text("Now")
+                    .font(.system(size: 12))
+                    .foregroundStyle(AppTheme.dashSecondary)
                 Text(widget.formatTemp(widget.temperature))
-                    .font(.system(size: 30, weight: .bold))
+                    .font(.system(size: 34, weight: .bold))
                     .foregroundStyle(AppTheme.dashBlue)
                 if let cond = widget.condition {
                     Text(cond)
-                        .font(.system(size: 13))
+                        .font(.system(size: 14))
                         .foregroundStyle(AppTheme.dashSecondary)
                 }
             }
@@ -275,52 +283,52 @@ struct WeatherLocationCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 4) {
                     Image(systemName: "drop.fill")
-                        .font(.system(size: 11))
+                        .font(.system(size: 12))
                         .foregroundStyle(AppTheme.dashBlue.opacity(0.8))
                     Text(widget.formatHumidity(widget.humidity))
-                        .font(.system(size: 15, weight: .medium))
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(AppTheme.dashText)
                 }
                 if let wind = widget.windSpeed {
                     HStack(spacing: 4) {
                         Image(systemName: "location.north.fill")
-                            .font(.system(size: 11))
+                            .font(.system(size: 12))
                             .foregroundStyle(AppTheme.dashSecondary)
                             .rotationEffect(.degrees(widget.windDirection ?? 0))
                         Text(String(format: "%.0f km/h", wind))
-                            .font(.system(size: 15, weight: .medium))
+                            .font(.system(size: 16, weight: .medium))
                             .foregroundStyle(AppTheme.dashText)
                     }
                 }
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 14)
+        .padding(.horizontal, 16)
     }
 
     // MARK: - Forecast Page
 
     private func weatherForecastPage(_ widget: DeviceWidget, period: String, high: Double?, low: Double?) -> some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 8) {
             Text(period)
-                .font(.system(size: 13))
+                .font(.system(size: 14))
                 .foregroundStyle(AppTheme.dashSecondary)
 
             HStack(spacing: 40) {
                 VStack(spacing: 2) {
                     Text(formatDeg(high))
-                        .font(.system(size: 28, weight: .bold))
+                        .font(.system(size: 32, weight: .bold))
                         .foregroundStyle(AppTheme.dashRed)
                     Text("High")
-                        .font(.system(size: 12))
+                        .font(.system(size: 13))
                         .foregroundStyle(AppTheme.dashSecondary)
                 }
                 VStack(spacing: 2) {
                     Text(formatDeg(low))
-                        .font(.system(size: 28, weight: .bold))
+                        .font(.system(size: 32, weight: .bold))
                         .foregroundStyle(AppTheme.dashBlue)
                     Text("Low")
-                        .font(.system(size: 12))
+                        .font(.system(size: 13))
                         .foregroundStyle(AppTheme.dashSecondary)
                 }
             }
@@ -331,6 +339,113 @@ struct WeatherLocationCard: View {
     private func formatDeg(_ value: Double?) -> String {
         guard let v = value else { return "--" }
         return String(format: "%.0f°", v)
+    }
+}
+
+// MARK: - Weather Detail Sheet
+
+struct WeatherDetailSheet: View {
+    let location: WeatherLocation
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Current conditions
+                    if let w = location.current {
+                        detailSection("Current Conditions") {
+                            detailRow("Temperature", w.formatTemp(w.temperature))
+                            detailRow("Condition", w.condition ?? "--")
+                            detailRow("Humidity", w.formatHumidity(w.humidity))
+                            if let wind = w.windSpeed {
+                                detailRow("Wind", String(format: "%.1f km/h", wind))
+                            }
+                            if let gusts = w.properties["wind_gusts"]?.doubleValue {
+                                detailRow("Gusts", String(format: "%.1f km/h", gusts))
+                            }
+                            if let feels = w.properties["feels_like"]?.doubleValue {
+                                detailRow("Feels Like", w.formatTemp(feels))
+                            }
+                            if let pressure = w.properties["pressure"]?.doubleValue {
+                                detailRow("Pressure", String(format: "%.0f hPa", pressure))
+                            }
+                            if let uv = w.properties["uv_index"]?.doubleValue {
+                                detailRow("UV Index", String(format: "%.1f", uv))
+                            }
+                            if let vis = w.properties["visibility"]?.doubleValue {
+                                detailRow("Visibility", String(format: "%.0f m", vis))
+                            }
+                            if let cloud = w.properties["cloud_cover"]?.doubleValue {
+                                detailRow("Cloud Cover", String(format: "%.0f%%", cloud))
+                            }
+                        }
+                    }
+
+                    // Today forecast
+                    if let w = location.today {
+                        detailSection("Today") {
+                            detailRow("High", formatDeg(w.todayHigh), color: AppTheme.dashRed)
+                            detailRow("Low", formatDeg(w.todayLow), color: AppTheme.dashBlue)
+                        }
+                    }
+
+                    // Tomorrow forecast
+                    if let w = location.tomorrow {
+                        detailSection("Tomorrow") {
+                            detailRow("High", formatDeg(w.tomorrowHigh), color: AppTheme.dashRed)
+                            detailRow("Low", formatDeg(w.tomorrowLow), color: AppTheme.dashBlue)
+                        }
+                    }
+                }
+                .padding()
+            }
+            .background(AppTheme.dashBackground)
+            .navigationTitle(location.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+            .toolbarBackground(AppTheme.dashBackground, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+        .preferredColorScheme(.dark)
+    }
+
+    private func detailSection(_ title: String, @ViewBuilder content: () -> some View) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AppTheme.dashText)
+            VStack(spacing: 0) {
+                content()
+            }
+            .background(AppTheme.dashCard)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(AppTheme.dashBorder, lineWidth: 1))
+        }
+    }
+
+    private func detailRow(_ label: String, _ value: String, color: Color = AppTheme.dashText) -> some View {
+        HStack {
+            Text(label)
+                .font(.system(size: 14))
+                .foregroundStyle(AppTheme.dashSecondary)
+            Spacer()
+            Text(value)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(color)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+    }
+
+    private func formatDeg(_ value: Double?) -> String {
+        guard let v = value else { return "--" }
+        return String(format: "%.0f°C", v)
     }
 }
 
@@ -349,7 +464,7 @@ struct ThermostatCard: View {
     }
 
     private var displaySetpoint: Double? {
-        widget.setpoint ?? widget.desiredTemp
+        widget.desiredTemp ?? widget.setpoint
     }
 
     var body: some View {
@@ -570,19 +685,19 @@ struct SensorWidget: View {
     let widget: DeviceWidget
 
     var body: some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 3) {
             Text(widget.formatTemp(widget.temperature))
-                .font(.system(size: 16, weight: .bold))
+                .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(AppTheme.dashBlue)
 
             if let hum = widget.humidity {
                 Text(widget.formatHumidity(hum))
-                    .font(.system(size: 10))
+                    .font(.system(size: 13))
                     .foregroundStyle(AppTheme.dashGreen)
             }
 
             Text(widget.label)
-                .font(.system(size: 9))
+                .font(.system(size: 10))
                 .foregroundStyle(AppTheme.dashSecondary)
                 .lineLimit(1)
         }

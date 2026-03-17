@@ -108,6 +108,7 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
     }
 
     // MARK: - Convenience Accessors
+    // Note: convertFromSnakeCase does NOT convert dictionary keys, so use snake_case
 
     /// Garage door state (closed/open/opening/closing)
     var state: String? { properties["state"]?.stringValue }
@@ -119,37 +120,43 @@ struct DeviceWidget: Identifiable, Codable, Hashable {
     var humidity: Double? { properties["humidity"]?.doubleValue }
 
     /// Thermostat desired temperature
-    var desiredTemp: Double? { properties["desiredTemp"]?.doubleValue }
+    var desiredTemp: Double? { properties["desired_temp"]?.doubleValue }
 
     /// Active HVAC setpoint (the one the system is targeting)
     var setpoint: Double? { properties["setpoint"]?.doubleValue }
 
     /// Thermostat room temperature
-    var roomTemp: Double? { properties["roomTemp"]?.doubleValue }
+    var roomTemp: Double? { properties["room_temp"]?.doubleValue }
 
     /// HVAC fan mode
-    var fanMode: String? { properties["fanMode"]?.stringValue }
+    var fanMode: String? { properties["fan_mode"]?.stringValue }
 
     /// Wind speed
-    var windSpeed: Double? { properties["windSpeed"]?.doubleValue }
+    var windSpeed: Double? { properties["wind_speed"]?.doubleValue }
 
     /// Wind direction in degrees
-    var windDirection: Double? { properties["windDirection"]?.doubleValue }
+    var windDirection: Double? { properties["wind_direction"]?.doubleValue }
 
     /// Weather condition text (e.g., "Partly cloudy")
     var condition: String? { properties["condition"]?.stringValue }
 
     /// Weather code (WMO)
     var weatherCode: Int? {
-        if let n = properties["weatherCode"]?.doubleValue { return Int(n) }
+        if let n = properties["weather_code"]?.doubleValue { return Int(n) }
         return nil
     }
 
     /// Thermostat mode (heat/cool/auto)
-    var thermostatMode: String? { properties["thermostatMode"]?.stringValue }
+    var thermostatMode: String? { properties["thermostat_mode"]?.stringValue }
 
     /// Thermostat state (heating/cooling/idle)
-    var thermostatState: String? { properties["thermostatState"]?.stringValue }
+    var thermostatState: String? { properties["thermostat_state"]?.stringValue }
+
+    /// Weather forecast high/low
+    var todayHigh: Double? { properties["today_high"]?.doubleValue }
+    var todayLow: Double? { properties["today_low"]?.doubleValue }
+    var tomorrowHigh: Double? { properties["tomorrow_high"]?.doubleValue }
+    var tomorrowLow: Double? { properties["tomorrow_low"]?.doubleValue }
 
     // Garage convenience
     var isGarageClosed: Bool { state == "closed" }
