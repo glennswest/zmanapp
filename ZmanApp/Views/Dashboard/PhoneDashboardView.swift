@@ -177,7 +177,7 @@ struct WeatherLocationCard: View {
             // Header: location name + page dots
             HStack {
                 Text(location.name)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(AppTheme.dashText)
                 Spacer()
                 HStack(spacing: 5) {
@@ -268,14 +268,14 @@ struct WeatherLocationCard: View {
         HStack(spacing: 20) {
             VStack(spacing: 4) {
                 Text("Now")
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .foregroundStyle(AppTheme.dashSecondary)
                 Text(widget.formatTemp(widget.temperature))
-                    .font(.system(size: 34, weight: .bold))
+                    .font(.system(size: 36, weight: .bold))
                     .foregroundStyle(AppTheme.dashBlue)
                 if let cond = widget.condition {
                     Text(cond)
-                        .font(.system(size: 14))
+                        .font(.system(size: 15))
                         .foregroundStyle(AppTheme.dashSecondary)
                 }
             }
@@ -283,20 +283,20 @@ struct WeatherLocationCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 4) {
                     Image(systemName: "drop.fill")
-                        .font(.system(size: 12))
+                        .font(.system(size: 13))
                         .foregroundStyle(AppTheme.dashBlue.opacity(0.8))
                     Text(widget.formatHumidity(widget.humidity))
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.system(size: 18, weight: .medium))
                         .foregroundStyle(AppTheme.dashText)
                 }
                 if let wind = widget.windSpeed {
                     HStack(spacing: 4) {
                         Image(systemName: "location.north.fill")
-                            .font(.system(size: 12))
+                            .font(.system(size: 13))
                             .foregroundStyle(AppTheme.dashSecondary)
                             .rotationEffect(.degrees(widget.windDirection ?? 0))
                         Text(String(format: "%.0f km/h", wind))
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.system(size: 18, weight: .medium))
                             .foregroundStyle(AppTheme.dashText)
                     }
                 }
@@ -311,24 +311,24 @@ struct WeatherLocationCard: View {
     private func weatherForecastPage(_ widget: DeviceWidget, period: String, high: Double?, low: Double?) -> some View {
         VStack(spacing: 8) {
             Text(period)
-                .font(.system(size: 14))
+                .font(.system(size: 15))
                 .foregroundStyle(AppTheme.dashSecondary)
 
             HStack(spacing: 40) {
                 VStack(spacing: 2) {
                     Text(formatDeg(high))
-                        .font(.system(size: 32, weight: .bold))
+                        .font(.system(size: 34, weight: .bold))
                         .foregroundStyle(AppTheme.dashRed)
                     Text("High")
-                        .font(.system(size: 13))
+                        .font(.system(size: 14))
                         .foregroundStyle(AppTheme.dashSecondary)
                 }
                 VStack(spacing: 2) {
                     Text(formatDeg(low))
-                        .font(.system(size: 32, weight: .bold))
+                        .font(.system(size: 34, weight: .bold))
                         .foregroundStyle(AppTheme.dashBlue)
                     Text("Low")
-                        .font(.system(size: 13))
+                        .font(.system(size: 14))
                         .foregroundStyle(AppTheme.dashSecondary)
                 }
             }
@@ -472,13 +472,13 @@ struct ThermostatCard: View {
             // Header
             HStack {
                 Text(widget.label)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(AppTheme.dashText)
                     .lineLimit(1)
                 Spacer()
                 if let state = widget.thermostatState {
                     Text(state)
-                        .font(.system(size: 12))
+                        .font(.system(size: 13))
                         .foregroundStyle(modeColor)
                 }
             }
@@ -488,19 +488,19 @@ struct ThermostatCard: View {
                 // Setpoint
                 VStack(spacing: 4) {
                     Text(widget.formatTemp(displaySetpoint))
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundStyle(modeColor)
                     Text("Setpoint")
-                        .font(.system(size: 10))
+                        .font(.system(size: 11))
                         .foregroundStyle(AppTheme.dashSecondary)
                     HStack(spacing: 14) {
                         Button {
                             Task { await appState.sendWidgetCommand(widget, command: "set_desired_temp_up") }
                         } label: {
                             Image(systemName: "arrowtriangle.up.fill")
-                                .font(.system(size: 10))
+                                .font(.system(size: 12))
                                 .foregroundStyle(AppTheme.dashText)
-                                .frame(width: 30, height: 26)
+                                .frame(width: 34, height: 28)
                                 .background(AppTheme.dashBorder.opacity(0.5))
                                 .clipShape(RoundedRectangle(cornerRadius: 4))
                         }
@@ -508,9 +508,9 @@ struct ThermostatCard: View {
                             Task { await appState.sendWidgetCommand(widget, command: "set_desired_temp_down") }
                         } label: {
                             Image(systemName: "arrowtriangle.down.fill")
-                                .font(.system(size: 10))
+                                .font(.system(size: 12))
                                 .foregroundStyle(AppTheme.dashText)
-                                .frame(width: 30, height: 26)
+                                .frame(width: 34, height: 28)
                                 .background(AppTheme.dashBorder.opacity(0.5))
                                 .clipShape(RoundedRectangle(cornerRadius: 4))
                         }
@@ -520,46 +520,46 @@ struct ThermostatCard: View {
 
                 Rectangle()
                     .fill(AppTheme.dashBorder)
-                    .frame(width: 1, height: 70)
+                    .frame(width: 1, height: 80)
 
                 // Room temp + humidity
                 VStack(spacing: 4) {
                     Text(widget.formatTemp(widget.roomTemp))
-                        .font(.system(size: 24, weight: .semibold))
+                        .font(.system(size: 26, weight: .semibold))
                         .foregroundStyle(AppTheme.dashText)
                     HStack(spacing: 3) {
                         Image(systemName: "drop.fill")
-                            .font(.system(size: 11))
+                            .font(.system(size: 12))
                             .foregroundStyle(AppTheme.dashGreen)
                         Text(widget.formatHumidity(widget.humidity))
-                            .font(.system(size: 14))
+                            .font(.system(size: 15))
                             .foregroundStyle(AppTheme.dashGreen)
                     }
                     Text("Room")
-                        .font(.system(size: 10))
+                        .font(.system(size: 11))
                         .foregroundStyle(AppTheme.dashSecondary)
                 }
                 .frame(maxWidth: .infinity)
 
                 Rectangle()
                     .fill(AppTheme.dashBorder)
-                    .frame(width: 1, height: 70)
+                    .frame(width: 1, height: 80)
 
                 // Fan mode
                 VStack(spacing: 4) {
                     Image(systemName: "fan.fill")
-                        .font(.system(size: 18))
+                        .font(.system(size: 20))
                         .foregroundStyle(AppTheme.dashSecondary)
                     Text(widget.fanMode ?? "--")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(AppTheme.dashText)
                     Button {
                         Task { await appState.sendWidgetCommand(widget, command: "set_fan_mode") }
                     } label: {
                         Image(systemName: "arrow.triangle.2.circlepath")
-                            .font(.system(size: 12))
+                            .font(.system(size: 13))
                             .foregroundStyle(AppTheme.dashBlue)
-                            .frame(width: 30, height: 26)
+                            .frame(width: 34, height: 28)
                             .background(AppTheme.dashBorder.opacity(0.5))
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
@@ -600,11 +600,11 @@ struct GarageDoorWidget: View {
                     .frame(width: 44, height: 44)
 
                 Text(doorState)
-                    .font(.system(size: 9))
+                    .font(.system(size: 11))
                     .foregroundStyle(AppTheme.dashSecondary)
 
                 Text(widget.label)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(AppTheme.dashText)
                     .lineLimit(1)
             }
@@ -687,17 +687,17 @@ struct SensorWidget: View {
     var body: some View {
         VStack(spacing: 3) {
             Text(widget.formatTemp(widget.temperature))
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 22, weight: .bold))
                 .foregroundStyle(AppTheme.dashBlue)
 
             if let hum = widget.humidity {
                 Text(widget.formatHumidity(hum))
-                    .font(.system(size: 13))
+                    .font(.system(size: 14))
                     .foregroundStyle(AppTheme.dashGreen)
             }
 
             Text(widget.label)
-                .font(.system(size: 10))
+                .font(.system(size: 11))
                 .foregroundStyle(AppTheme.dashSecondary)
                 .lineLimit(1)
         }
