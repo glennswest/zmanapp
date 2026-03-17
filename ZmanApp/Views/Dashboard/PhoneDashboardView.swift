@@ -34,8 +34,11 @@ struct PhoneDashboardView: View {
                 .background(AppTheme.dashBackground)
             }
             .background(AppTheme.dashBackground)
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
+                #if os(iOS)
                 ToolbarItem(placement: .principal) {
                     Text("Zman")
                         .font(.subheadline)
@@ -50,10 +53,20 @@ struct PhoneDashboardView: View {
                             .foregroundStyle(AppTheme.dashSecondary)
                     }
                 }
+                #else
+                ToolbarItem(placement: .automatic) {
+                    Text("Zman")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundStyle(AppTheme.dashBlue)
+                }
+                #endif
             }
+            #if os(iOS)
             .toolbarBackground(AppTheme.dashBackground, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            #endif
             .refreshable {
                 await appState.refreshCurrentBuilding()
             }
@@ -144,8 +157,11 @@ struct PhoneDashboardView: View {
     }
 
     private var gridColumns: [GridItem] {
-        let isWide = PlatformService.isWideDevice
-        let columns = isWide ? 6 : 3
+        #if os(macOS)
+        let columns = 3
+        #else
+        let columns = PlatformService.isWideDevice ? 6 : 3
+        #endif
         return Array(repeating: GridItem(.flexible(), spacing: 10), count: columns)
     }
 }
@@ -402,15 +418,25 @@ struct WeatherDetailSheet: View {
             }
             .background(AppTheme.dashBackground)
             .navigationTitle(location.name)
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
+                #if os(iOS)
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
                 }
+                #else
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
+                }
+                #endif
             }
+            #if os(iOS)
             .toolbarBackground(AppTheme.dashBackground, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            #endif
         }
         .preferredColorScheme(.dark)
     }

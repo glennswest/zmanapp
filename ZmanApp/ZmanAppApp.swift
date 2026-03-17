@@ -10,11 +10,11 @@ struct ZmanAppApp: App {
             ContentView()
                 .environment(appState)
                 #if os(macOS)
-                .frame(minWidth: 800, minHeight: 500)
+                .frame(minWidth: 420, minHeight: 600)
                 #endif
         }
         #if os(macOS)
-        .defaultSize(width: 1000, height: 700)
+        .defaultSize(width: 460, height: 800)
         #endif
         #if os(macOS)
         .commands {

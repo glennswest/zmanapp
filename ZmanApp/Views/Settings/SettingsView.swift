@@ -194,7 +194,9 @@ struct SettingsView: View {
                     }
                 }
                 .navigationTitle("Debug Log")
+                #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
+                #endif
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button {

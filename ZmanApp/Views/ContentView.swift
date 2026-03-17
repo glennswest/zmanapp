@@ -7,10 +7,16 @@ struct ContentView: View {
         Group {
             if appState.showOnboarding {
                 OnboardingView()
-            } else if appState.isWideLayout {
-                PadDashboardView()
             } else {
+                #if os(macOS)
                 PhoneDashboardView()
+                #else
+                if appState.isWideLayout {
+                    PadDashboardView()
+                } else {
+                    PhoneDashboardView()
+                }
+                #endif
             }
         }
         .alert("Error", isPresented: Bindable(appState).showError) {
