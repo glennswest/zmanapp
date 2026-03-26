@@ -33,6 +33,7 @@
 		CC334C043D25446AAE81E63E /* GarageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EEED35BF86AE931FEA824B8 /* GarageView.swift */; };
 		D549B04B7600532C16407860 /* StatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76865972481C5BD294CB405E /* StatusBadge.swift */; };
 		D55D198B20DBA132AFA0BF2F /* RoomViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5B69B06153580884D5C2B3 /* RoomViewModel.swift */; };
+		F1157788EE62CE9349CCF08E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 547E6EB56F708D1A9555F5F4 /* PrivacyInfo.xcprivacy */; };
 		F266D5BBDBF71B2B3C96A1C1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589A6991586B81D917F4EA70 /* SettingsView.swift */; };
 		F7B750EA7F0E975C2DF8BE48 /* PhoneDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB5ECBB416D3B872448145 /* PhoneDashboardView.swift */; };
 		FC2144AD1BB28F87E2029AB3 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2FB4E1E2BB2D27ED97AB56F /* AppTheme.swift */; };
@@ -47,6 +48,7 @@
 		2D2FCE3F4AE480F757BB4329 /* CloudService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudService.swift; sourceTree = "<group>"; };
 		3B16F4EFF179BB2A304C1A1D /* ZmanAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZmanAppApp.swift; sourceTree = "<group>"; };
 		3E06723018FFE44F784C2F9E /* Residence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Residence.swift; sourceTree = "<group>"; };
+		547E6EB56F708D1A9555F5F4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		589A6991586B81D917F4EA70 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		5F2D1C24D3A46360EF2EC824 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
 		6019274E00AE90E97259A65D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				5B57766302B28E16153EB445 /* Views */,
 				A44EF9B7B1953FA19FBAB921 /* Assets.xcassets */,
 				82FA9BEB2B08A87225723B84 /* Info.plist */,
+				547E6EB56F708D1A9555F5F4 /* PrivacyInfo.xcprivacy */,
 				3B16F4EFF179BB2A304C1A1D /* ZmanAppApp.swift */,
 			);
 			path = ZmanApp;
@@ -326,6 +329,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				467A6E27D951B2FA4FF1A439 /* Assets.xcassets in Resources */,
+				F1157788EE62CE9349CCF08E /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,7 +415,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 24MSLHRERR;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -532,7 +536,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 24MSLHRERR;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
