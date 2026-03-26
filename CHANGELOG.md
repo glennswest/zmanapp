@@ -2,49 +2,60 @@
 
 ## [Unreleased]
 
-### 2026-03-16
-- **feat:** Full-width thermostat card — setpoint (26pt, mode-colored), room temp (24pt), fan mode in 3-section horizontal layout with dividers
-- **feat:** Rotating weather cards per location — groups Algood/Cookeville widgets, auto-rotates current→today→tomorrow every 5s with swipe support
-- **feat:** Weather fonts now 28-30pt for temps, readable condition/humidity/wind info
-- **feat:** Add `setpoint` property accessor (hub's active HVAC target, preferred over desiredTemp)
-- **refactor:** Sectioned dashboard layout — regular widgets in grid, thermostat and weather as full-width cards
-- **refactor:** Remove DashboardCell enum — replaced by sectioned VStack approach
-- **feat:** Weather routing via hub `property` field (today/tomorrow/null) instead of ID matching
-- **feat:** WeatherCurrentWidget shows condition text, wind direction compass arrow, wind speed
-- **feat:** Add `widgetTypeRaw` and `widgetProperty` fields to DeviceWidget for hub type/property decoding
-- **feat:** Add `tempUnit` field to Building model from hub API
-- **feat:** Add thermostatMode, thermostatState, condition, windDirection property accessors
-- **fix:** Fix unreachable default case in widget type switch
-- **feat:** Rewrite dashboard UI to match web UI — dark theme, dashboard tabs (Main/Weather), garage door panel icons, sensor/thermostat/weather widget cards
-- **feat:** Add PropertyValue type for flexible JSON property parsing (string/number/bool)
-- **feat:** Add WidgetType inference from device_id prefix (garage, thermostat, sensor, weather)
-- **feat:** Add dark theme colors matching web UI (#0f1117 background, #161b22 cards, #58a6ff accent blue)
-- **feat:** Add GarageDoorIcon with Canvas-rendered SVG-style panel graphics (closed/open/moving states)
-- **feat:** Add DashCardStyle view modifier for dark-themed widget cards
-- **refactor:** Rewrite DeviceWidget model — now uses deviceId, dashboardId, properties dict instead of kind/category/state enums
-- **refactor:** Change API command endpoint to POST /api/v1/devices/{deviceId}/command matching hub API
-- **refactor:** AppState now organizes widgets by dashboard tab instead of area mode
-- **refactor:** StatusBadge now uses string state instead of WidgetState enum
-- **refactor:** Remove WidgetKind, WidgetCategory, WidgetState enums (replaced by properties-based model)
-- **refactor:** Remove physical/virtual filter system and AreaCard from dashboard
-- **refactor:** Simplify GarageViewModel and RoomViewModel for new widget model
-- **fix:** Add retry tolerance to claim poll loop — transient errors no longer kill the flow
-- **fix:** Increase cloud service timeouts (30s request / 60s resource) for email verification
-- **feat:** Implement cloud claim authentication flow (email magic link → claim token → API key)
-- **feat:** Add CloudService for cloud.zmanapp.com worker endpoints (connect, poll, claim)
-- **feat:** Add X-API-Key header auth support to APIService
-- **feat:** Rewrite OnboardingView with email entry, polling, and claim exchange screens
-- **refactor:** Replace username/password login with email magic-link claim flow
-- **refactor:** Remove LoginView (superseded by claim flow in OnboardingView)
-- **refactor:** Remove TunnelConfig model (replaced by hub persistence fields)
-- **feat:** Add hub info display in SettingsView (hostname, hub ID, email)
-- **feat:** Add apiKey, hubId, hubHostname, claimEmail to PersistenceService (Keychain/UserDefaults)
-- **feat:** Add debug log system with View Log sheet in Settings and Onboarding
-- **docs:** Update README with cloud worker API endpoints and new auth flow
+## [v0.3.0] — 2026-03-26
 
-### 2026-03-11
-- **chore:** Switch to automatic code signing with development team for device builds
-- **feat:** Add app icon — bold Z with lightning bolt on dark navy background
+### Added
+- Full-width thermostat card — setpoint (26pt, mode-colored), room temp (24pt), fan mode in 3-section horizontal layout with dividers
+- Rotating weather cards per location — groups Algood/Cookeville widgets, auto-rotates current→today→tomorrow every 5s with swipe support
+- Weather fonts now 28-30pt for temps, readable condition/humidity/wind info
+- `setpoint` property accessor (hub's active HVAC target, preferred over desiredTemp)
+- Weather routing via hub `property` field (today/tomorrow/null) instead of ID matching
+- WeatherCurrentWidget shows condition text, wind direction compass arrow, wind speed
+- `widgetTypeRaw` and `widgetProperty` fields to DeviceWidget for hub type/property decoding
+- `tempUnit` field to Building model from hub API
+- thermostatMode, thermostatState, condition, windDirection property accessors
+- PropertyValue type for flexible JSON property parsing (string/number/bool)
+- WidgetType inference from device_id prefix (garage, thermostat, sensor, weather)
+- Dark theme colors matching web UI (#0f1117 background, #161b22 cards, #58a6ff accent blue)
+- GarageDoorIcon with Canvas-rendered SVG-style panel graphics (closed/open/moving states)
+- DashCardStyle view modifier for dark-themed widget cards
+- Cloud claim authentication flow (email magic link → claim token → API key)
+- CloudService for cloud.zmanapp.com worker endpoints (connect, poll, claim)
+- X-API-Key header auth support to APIService
+- Rewrite OnboardingView with email entry, polling, and claim exchange screens
+- Hub info display in SettingsView (hostname, hub ID, email)
+- apiKey, hubId, hubHostname, claimEmail to PersistenceService (Keychain/UserDefaults)
+- Debug log system with View Log sheet in Settings and Onboarding
+- App icon — bold Z with lightning bolt on dark navy background
+- Plug widget with power icon and on/off toggle animation
+- Privacy manifest (PrivacyInfo.xcprivacy) for App Store compliance
+- ExportOptions.plist for App Store Connect archive upload
+- TestFlight beta release preparation (build 3)
+
+### Changed
+- Sectioned dashboard layout — regular widgets in grid, thermostat and weather as full-width cards
+- Removed DashboardCell enum — replaced by sectioned VStack approach
+- Rewrite DeviceWidget model — now uses deviceId, dashboardId, properties dict instead of kind/category/state enums
+- API command endpoint changed to POST /api/v1/devices/{deviceId}/command matching hub API
+- AppState now organizes widgets by dashboard tab instead of area mode
+- StatusBadge now uses string state instead of WidgetState enum
+- Removed WidgetKind, WidgetCategory, WidgetState enums (replaced by properties-based model)
+- Removed physical/virtual filter system and AreaCard from dashboard
+- Simplified GarageViewModel and RoomViewModel for new widget model
+- Replaced username/password login with email magic-link claim flow
+- Removed LoginView (superseded by claim flow in OnboardingView)
+- Removed TunnelConfig model (replaced by hub persistence fields)
+- Switched to automatic code signing with development team
+
+### Fixed
+- Unreachable default case in widget type switch
+- Retry tolerance in claim poll loop — transient errors no longer kill the flow
+- Increased cloud service timeouts (30s request / 60s resource) for email verification
+- Thermostat room temp font matches setpoint (both 28pt)
+- Use snake_case property keys — convertFromSnakeCase doesn't affect dict keys
+
+### Documentation
+- Updated README with cloud worker API endpoints and new auth flow
 
 ## [v0.2.0] — 2026-03-10
 
