@@ -35,7 +35,7 @@ targets:
     dependencies:
       - target: ZmanWidgets
         embed: true
-        platforms: [iOS]
+        codeSign: true
 
   ZmanWidgets:
     type: app-extension

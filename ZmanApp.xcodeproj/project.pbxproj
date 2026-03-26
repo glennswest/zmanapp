@@ -11,6 +11,7 @@
 		20B55D2CC6E2FE50BAF8C0AB /* Residence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E06723018FFE44F784C2F9E /* Residence.swift */; };
 		260A4F62D51CAB5473D27BBC /* GarageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB2B29BEBA4C8D0C2B08DAD /* GarageViewModel.swift */; };
 		3299827561255748F1201689 /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C1BB6EE09E49896DA591EC /* RoomView.swift */; };
+		33835D41C58D10E6765E4EDF /* ZmanWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E4A4ADFF146D7155E6FD68CD /* ZmanWidgets.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		40A5714B055AFEB69BABBA46 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607F71E6405BFA0738878200 /* APIService.swift */; };
 		4502DBB74A3728B3336CCED4 /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C6FAACC61C8443CA49C8533 /* SectionHeader.swift */; };
 		467A6E27D951B2FA4FF1A439 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A44EF9B7B1953FA19FBAB921 /* Assets.xcassets */; };
@@ -38,6 +39,30 @@
 		F7B750EA7F0E975C2DF8BE48 /* PhoneDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CB5ECBB416D3B872448145 /* PhoneDashboardView.swift */; };
 		FC2144AD1BB28F87E2029AB3 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2FB4E1E2BB2D27ED97AB56F /* AppTheme.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		67EFE4B9F24028E7F8781B5B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3A413FB5CC442F631FBCDFFF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 28F61C1EFF1C54CFD668659C;
+			remoteInfo = ZmanWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		518A2BAFF0F1869DAF15CFF9 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				33835D41C58D10E6765E4EDF /* ZmanWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0BB1A4022AA1DC4262A173EB /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
@@ -264,10 +289,12 @@
 			buildPhases = (
 				6DB57B38C21F6ABCBEC6AB26 /* Sources */,
 				24D240DBBA60A0B689604619 /* Resources */,
+				518A2BAFF0F1869DAF15CFF9 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				AF7FCD3E5B675A257A4B9560 /* PBXTargetDependency */,
 			);
 			name = ZmanApp;
 			packageProductDependencies = (
@@ -378,6 +405,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AF7FCD3E5B675A257A4B9560 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 28F61C1EFF1C54CFD668659C /* ZmanWidgets */;
+			targetProxy = 67EFE4B9F24028E7F8781B5B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		0594144F15CD1FEC36C6F286 /* Release */ = {
