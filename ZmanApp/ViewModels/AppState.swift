@@ -13,6 +13,7 @@ final class AppState {
     var showError = false
     var isAuthenticated = false
     var showOnboarding = false
+    var demoMode = false
 
     // Dashboard tab state
     var selectedDashboard: String = "default"
@@ -354,9 +355,25 @@ final class AppState {
 
     func toggleWidget(_ widget: DeviceWidget) async {
         log("Toggle: \(widget.deviceId) (widget: \(widget.id))")
+
+        if demoMode {
+            mutateWidgetProperties(widgetId: widget.id) { props in
+                switch widget.widgetType {
+                case .garage:
+                    let current = props["state"]?.stringValue ?? "closed"
+                    props["state"] = .string(current == "closed" ? "open" : "closed")
+                case .plug:
+                    let current = props["on_off"]?.boolValue ?? false
+                    props["on_off"] = .bool(!current)
+                default:
+                    break
+                }
+            }
+            return
+        }
+
         do {
             try await api.sendDeviceCommand(deviceId: widget.deviceId, command: "toggle")
-            // Refresh to get updated state
             await refreshCurrentBuilding()
         } catch {
             log("Toggle FAILED: \(error.localizedDescription)")
@@ -366,6 +383,28 @@ final class AppState {
 
     func sendWidgetCommand(_ widget: DeviceWidget, command: String) async {
         log("Command: \(command) → \(widget.deviceId)")
+
+        if demoMode {
+            mutateWidgetProperties(widgetId: widget.id) { props in
+                switch command {
+                case "temp_up":
+                    let current = props["desired_temp"]?.doubleValue ?? 22.0
+                    props["desired_temp"] = .number(current + 0.5)
+                case "temp_down":
+                    let current = props["desired_temp"]?.doubleValue ?? 22.0
+                    props["desired_temp"] = .number(current - 0.5)
+                case "fan_mode":
+                    let modes = ["auto", "low", "medium", "high"]
+                    let current = props["fan_mode"]?.stringValue ?? "auto"
+                    let idx = modes.firstIndex(of: current) ?? 0
+                    props["fan_mode"] = .string(modes[(idx + 1) % modes.count])
+                default:
+                    break
+                }
+            }
+            return
+        }
+
         do {
             try await api.sendDeviceCommand(deviceId: widget.deviceId, command: command)
             await refreshCurrentBuilding()
@@ -381,6 +420,7 @@ final class AppState {
         syncService.stopSync()
         api.logout()
         persistence.resetAll()
+        demoMode = false
         isAuthenticated = false
         buildings = []
         selectedBuilding = nil
@@ -389,6 +429,159 @@ final class AppState {
         claimEmail = ""
         pendingClaims = []
         showOnboarding = true
+    }
+
+    // MARK: - Demo Mode
+
+    func enterDemoMode() {
+        log("Demo: entering demo mode")
+        demoMode = true
+        buildings = createDemoBuildings()
+        selectedBuilding = buildings.first
+        selectedDashboard = "default"
+        isAuthenticated = true
+        showOnboarding = false
+        claimPhase = .complete
+    }
+
+    private func createDemoBuildings() -> [Building] {
+        // Main dashboard widgets
+        let garage1 = DeviceWidget(
+            id: "demo-garage-1", deviceId: "virtual.esphome.main_door",
+            label: "Main Door", dashboardId: "default",
+            properties: ["state": .string("closed")],
+            sortOrder: 0, widgetTypeRaw: "garage"
+        )
+        let garage2 = DeviceWidget(
+            id: "demo-garage-2", deviceId: "virtual.esphome.side_door",
+            label: "Side Door", dashboardId: "default",
+            properties: ["state": .string("open")],
+            sortOrder: 1, widgetTypeRaw: "garage"
+        )
+        let thermostat = DeviceWidget(
+            id: "demo-hvac-1", deviceId: "virtual.hvac.living_room",
+            label: "Living Room", dashboardId: "default",
+            properties: [
+                "desired_temp": .number(22.5),
+                "room_temp": .number(21.2),
+                "humidity": .number(45),
+                "fan_mode": .string("auto"),
+                "thermostat_mode": .string("heat"),
+                "thermostat_state": .string("idle"),
+                "setpoint": .number(23.0)
+            ],
+            sortOrder: 2, widgetTypeRaw: "hvac"
+        )
+        let sensor1 = DeviceWidget(
+            id: "demo-sensor-1", deviceId: "zwave.hallway",
+            label: "Hallway", dashboardId: "default",
+            properties: ["temperature": .number(20.5), "humidity": .number(42)],
+            sortOrder: 3, widgetTypeRaw: "sensor"
+        )
+        let sensor2 = DeviceWidget(
+            id: "demo-sensor-2", deviceId: "zwave.bedroom",
+            label: "Bedroom", dashboardId: "default",
+            properties: ["temperature": .number(19.8), "humidity": .number(38)],
+            sortOrder: 4, widgetTypeRaw: "sensor"
+        )
+        let sensor3 = DeviceWidget(
+            id: "demo-sensor-3", deviceId: "zwave.kitchen",
+            label: "Kitchen", dashboardId: "default",
+            properties: ["temperature": .number(21.0), "humidity": .number(55)],
+            sortOrder: 5, widgetTypeRaw: "sensor"
+        )
+        let plug1 = DeviceWidget(
+            id: "demo-plug-1", deviceId: "virtual.esphome.desk_lamp",
+            label: "Desk Lamp", dashboardId: "default",
+            properties: ["on_off": .bool(true)],
+            sortOrder: 6, widgetTypeRaw: "plug"
+        )
+
+        // Weather dashboard widgets — Algood
+        let algoodCurrent = DeviceWidget(
+            id: "demo-weather-algood-current", deviceId: "virtual.weather.algood",
+            label: "Algood", dashboardId: "weather",
+            properties: [
+                "temperature": .number(18),
+                "humidity": .number(52),
+                "condition": .string("Partly Cloudy"),
+                "weather_code": .number(2),
+                "wind_speed": .number(12),
+                "wind_direction": .number(220),
+                "today_high": .number(24), "today_low": .number(12),
+                "tomorrow_high": .number(22), "tomorrow_low": .number(10)
+            ],
+            sortOrder: 0, widgetTypeRaw: "weather", widgetProperty: nil
+        )
+        let algoodToday = DeviceWidget(
+            id: "demo-weather-algood-today", deviceId: "virtual.weather.algood",
+            label: "Algood", dashboardId: "weather",
+            properties: algoodCurrent.properties,
+            sortOrder: 1, widgetTypeRaw: "forecast", widgetProperty: "today"
+        )
+        let algoodTomorrow = DeviceWidget(
+            id: "demo-weather-algood-tomorrow", deviceId: "virtual.weather.algood",
+            label: "Algood", dashboardId: "weather",
+            properties: algoodCurrent.properties,
+            sortOrder: 2, widgetTypeRaw: "forecast", widgetProperty: "tomorrow"
+        )
+
+        // Weather dashboard widgets — Cookeville
+        let cookevilleCurrent = DeviceWidget(
+            id: "demo-weather-cookeville-current", deviceId: "virtual.weather.cookeville",
+            label: "Cookeville", dashboardId: "weather",
+            properties: [
+                "temperature": .number(17),
+                "humidity": .number(48),
+                "condition": .string("Clear"),
+                "weather_code": .number(0),
+                "wind_speed": .number(8),
+                "wind_direction": .number(180),
+                "today_high": .number(23), "today_low": .number(11),
+                "tomorrow_high": .number(21), "tomorrow_low": .number(9)
+            ],
+            sortOrder: 3, widgetTypeRaw: "weather", widgetProperty: nil
+        )
+        let cookevilleToday = DeviceWidget(
+            id: "demo-weather-cookeville-today", deviceId: "virtual.weather.cookeville",
+            label: "Cookeville", dashboardId: "weather",
+            properties: cookevilleCurrent.properties,
+            sortOrder: 4, widgetTypeRaw: "forecast", widgetProperty: "today"
+        )
+        let cookevilleTomorrow = DeviceWidget(
+            id: "demo-weather-cookeville-tomorrow", deviceId: "virtual.weather.cookeville",
+            label: "Cookeville", dashboardId: "weather",
+            properties: cookevilleCurrent.properties,
+            sortOrder: 5, widgetTypeRaw: "forecast", widgetProperty: "tomorrow"
+        )
+
+        let mainArea = Area(
+            id: "demo-area-main", name: "Main",
+            icon: "square.grid.2x2.fill", mode: .general,
+            widgets: [garage1, garage2, thermostat, sensor1, sensor2, sensor3, plug1,
+                      algoodCurrent, algoodToday, algoodTomorrow,
+                      cookevilleCurrent, cookevilleToday, cookevilleTomorrow],
+            sortOrder: 0
+        )
+
+        return [Building(id: "demo-building", name: "Demo Home", areas: [mainArea])]
+    }
+
+    /// Mutate a widget's properties in-place and reassign selectedBuilding to trigger SwiftUI refresh
+    private func mutateWidgetProperties(widgetId: String, update: (inout [String: PropertyValue]) -> Void) {
+        guard var building = selectedBuilding else { return }
+        for ai in building.areas.indices {
+            for wi in building.areas[ai].widgets.indices {
+                if building.areas[ai].widgets[wi].id == widgetId {
+                    update(&building.areas[ai].widgets[wi].properties)
+                    if let bi = buildings.firstIndex(where: { $0.id == building.id }) {
+                        buildings[bi] = building
+                    }
+                    selectedBuilding = building
+                    return
+                }
+            }
+        }
     }
 
     // MARK: - Error Handling

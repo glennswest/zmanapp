@@ -3,6 +3,7 @@ import SwiftUI
 struct OnboardingView: View {
     @Environment(AppState.self) private var appState
     @State private var email = ""
+    @State private var password = ""
     @State private var showLog = false
 
     var body: some View {
@@ -73,25 +74,36 @@ struct OnboardingView: View {
                     .background(AppTheme.secondaryBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
 
+                if isDemoEmail {
+                    SecureField("Password", text: $password)
+                        .padding()
+                        .background(AppTheme.secondaryBackground)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+
                 Button {
-                    Task { await appState.startClaimFlow(email: email) }
+                    if isDemoEmail && password == "user" {
+                        appState.enterDemoMode()
+                    } else {
+                        Task { await appState.startClaimFlow(email: email) }
+                    }
                 } label: {
                     Group {
                         if appState.isLoading {
                             ProgressView()
                                 .tint(.white)
                         } else {
-                            Text("Send Link")
+                            Text(isDemoEmail ? "Enter Demo" : "Send Link")
                                 .fontWeight(.semibold)
                         }
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(isValidEmail ? AppTheme.accent : AppTheme.offGray)
+                    .background(canSubmit ? AppTheme.accent : AppTheme.offGray)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .disabled(!isValidEmail || appState.isLoading)
+                .disabled(!canSubmit || appState.isLoading)
             }
             .padding(.horizontal, 40)
 
@@ -257,8 +269,17 @@ struct OnboardingView: View {
         }
     }
 
+    private var isDemoEmail: Bool {
+        email.lowercased().trimmingCharacters(in: .whitespaces) == "demo"
+    }
+
     private var isValidEmail: Bool {
         email.contains("@") && email.contains(".") && email.count >= 5
+    }
+
+    private var canSubmit: Bool {
+        if isDemoEmail { return !password.isEmpty }
+        return isValidEmail
     }
 }
 

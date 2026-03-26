@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### 2026-03-26
+- **feat:** Demo mode for App Store review — email `demo` / password `user` loads hardcoded dashboard with interactive widgets (garages, thermostat, sensors, plug, weather) and no network calls
+
 ## [v0.3.0] — 2026-03-26
 
 ### Added
